@@ -373,6 +373,10 @@
       gap: 11px;
     }
 
+    .hero-buttons button[hidden] {
+      display: none;
+    }
+
     .primary-button,
     .secondary-button {
       min-height: 50px;
@@ -1149,6 +1153,41 @@
       font-weight: 700;
     }
 
+    .form-input.invalid,
+    .form-select.invalid {
+      border-color: #d95068;
+      background: #fff6f8;
+      box-shadow: 0 0 0 3px rgba(217, 80, 104, 0.14);
+    }
+
+    .auth-error,
+    .field-error {
+      color: #b52f4d;
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    .auth-error {
+      margin: 12px 0 0;
+      padding: 10px 12px;
+      border: 1px solid rgba(181, 47, 77, 0.2);
+      border-radius: 12px;
+      background: #fff0f3;
+      font-size: 0.78rem;
+      text-align: left;
+    }
+
+    .field-error {
+      margin: 0;
+      font-size: 0.72rem;
+      text-align: left;
+    }
+
+    .auth-error[hidden],
+    .field-error[hidden] {
+      display: none;
+    }
+
     .form-help {
       margin: 0;
       color: var(--muted);
@@ -1416,6 +1455,14 @@
       font-size: 0.75rem;
       line-height: 1.4;
       text-align: left;
+    }
+
+    .consent-row.invalid {
+      padding: 8px;
+      border: 1px solid rgba(181, 47, 77, 0.24);
+      border-radius: 10px;
+      color: #b52f4d;
+      background: #fff0f3;
     }
 
     .consent-row input {
@@ -2060,12 +2107,14 @@
       <div class="modal-emoji" id="authEmoji">✨</div>
       <h2 id="authTitle">Create an explorer account</h2>
       <p id="authSubtitle">Add the child’s details to save progress and unlock the adventure.</p>
+      <p class="auth-error" id="authError" role="alert" hidden></p>
 
-      <form class="auth-form" id="signupForm">
+      <form class="auth-form" id="signupForm" novalidate>
         <div class="form-grid">
           <div class="form-field full">
             <label for="signupName">Name <span>*</span></label>
             <input class="form-input" id="signupName" name="name" type="text" maxlength="40" required autocomplete="name" />
+            <p class="field-error" id="signupNameError" role="alert" hidden></p>
           </div>
           <div class="form-field">
             <label for="signupGender">Gender <span>*</span></label>
@@ -2075,34 +2124,40 @@
               <option value="Female">Female</option>
               <option value="Other">Other</option>
             </select>
+            <p class="field-error" id="signupGenderError" role="alert" hidden></p>
           </div>
           <div class="form-field">
             <label for="signupAge">Age <span>*</span></label>
             <input class="form-input" id="signupAge" name="age" type="number" min="1" max="5" step="1" required inputmode="numeric" />
+            <p class="field-error" id="signupAgeError" role="alert" hidden></p>
           </div>
           <div class="form-field full">
             <label for="signupMobile">Mobile / WhatsApp number <span>*</span></label>
             <input class="form-input" id="signupMobile" name="mobile" type="tel" pattern="[0-9]{10}" maxlength="10" required inputmode="numeric" autocomplete="tel" />
             <p class="form-help">Enter a 10-digit mobile number. This will be used to log in again.</p>
+            <p class="field-error" id="signupMobileError" role="alert" hidden></p>
           </div>
           <div class="form-field full">
             <label for="signupEmail">Email address</label>
             <input class="form-input" id="signupEmail" name="email" type="email" autocomplete="email" />
             <p class="form-help">Optional. You can leave this field blank.</p>
+            <p class="field-error" id="signupEmailError" role="alert" hidden></p>
           </div>
         </div>
         <button class="primary-button" type="submit">Sign up and start 🚀</button>
       </form>
 
-      <form class="auth-form" id="loginForm" hidden>
+      <form class="auth-form" id="loginForm" hidden novalidate>
         <div class="form-grid">
           <div class="form-field full">
             <label for="loginName">Name <span>*</span></label>
             <input class="form-input" id="loginName" name="name" type="text" maxlength="40" required autocomplete="name" />
+            <p class="field-error" id="loginNameError" role="alert" hidden></p>
           </div>
           <div class="form-field full">
             <label for="loginMobile">Mobile / WhatsApp number <span>*</span></label>
             <input class="form-input" id="loginMobile" name="mobile" type="tel" pattern="[0-9]{10}" maxlength="10" required inputmode="numeric" autocomplete="tel" />
+            <p class="field-error" id="loginMobileError" role="alert" hidden></p>
           </div>
         </div>
         <p class="form-help">Use the same name and mobile number used during signup.</p>
@@ -2157,15 +2212,16 @@
             <button class="copy-upi" id="copyUpiButton" type="button">Copy</button>
           </div>
           <p class="form-help">Scan the QR code and pay ₹10. The UTR or transaction ID is optional, but adding it can help us verify your payment faster.</p>
-          <form class="payment-form" id="paymentForm">
+          <form class="payment-form" id="paymentForm" novalidate>
             <div class="form-field">
               <label for="utrField">UPI UTR / transaction ID <span class="optional-label">(Optional)</span></label>
               <input class="form-input" id="utrField" name="utr" type="text" maxlength="80" autocomplete="off" />
             </div>
-            <label class="consent-row">
+            <label class="consent-row" id="paymentConsentRow">
               <input id="paymentConfirmation" type="checkbox" required />
               <span>I confirm that I have completed the ₹10 payment and want to unlock the learning adventure.</span>
             </label>
+            <p class="field-error" id="paymentError" role="alert" hidden></p>
             <button class="primary-button" id="submitPaymentButton" type="submit">Submit &amp; start verification</button>
           </form>
           <div class="payment-timeline" id="paymentTimeline" aria-label="Payment confirmation timeline">
@@ -2914,6 +2970,19 @@
       var numberPictures = ["⭐", "🍎", "🦋", "🐳", "🌈", "🚀", "🌸", "🐝", "🍭", "🎈"];
       var celebrationColors = ["#6c5ce7", "#ff7b8a", "#ffd166", "#73e6c2", "#7bdff2"];
 
+      var stageNamesByWorld = {
+        letter: ["Apple Grove", "Ball Beach", "Cat Cove", "Dog Park", "Elephant Trail", "Fishy Bay", "Grape Garden", "Hat Hill", "Ice-Cream Island", "Jungle Jingle"],
+        number: ["Starry Steps", "Apple Count", "Butterfly Bridge", "Whale Watch", "Rainbow Road", "Rocket Run", "Flower Field", "Bee Buzz", "Candy Corner", "Balloon Bay"],
+        mix: ["Puzzle Pond", "Letter Lake", "Number Nest", "Colour Cove", "Tiny Trail", "Shape Safari", "Magic Meadow", "Cloud Climb", "Treasure Turn", "Rainbow Round"],
+        table: ["Table Town", "Rocket Rows", "Dino Drive", "Jungle Jumps", "Ocean Orbit", "Castle Count", "Space Steps", "Mountain Math", "Golden Grid", "Champion Peak"]
+      };
+      var stageIconsByWorld = {
+        letter: ["🍎", "⚽", "🐱", "🐶", "🐘", "🐟", "🍇", "🧢", "🍦", "🪁"],
+        number: ["⭐", "🍎", "🦋", "🐳", "🌈", "🚀", "🌸", "🐝", "🍭", "🎈"],
+        mix: ["🧩", "🔤", "🔢", "🎨", "🦄", "🔺", "🌼", "☁️", "🗝️", "🌈"],
+        table: ["✖️", "🚀", "🦖", "🌴", "🐠", "🏰", "🪐", "⛰️", "🏅", "🏆"]
+      };
+
       var elements = {
         screens: document.querySelectorAll(".screen"),
         playButton: document.getElementById("playButton"),
@@ -2939,6 +3008,7 @@
         authModal: document.getElementById("authModal"),
         authTitle: document.getElementById("authTitle"),
         authSubtitle: document.getElementById("authSubtitle"),
+        authError: document.getElementById("authError"),
         signupForm: document.getElementById("signupForm"),
         loginForm: document.getElementById("loginForm"),
         signupName: document.getElementById("signupName"),
@@ -2946,8 +3016,15 @@
         signupAge: document.getElementById("signupAge"),
         signupMobile: document.getElementById("signupMobile"),
         signupEmail: document.getElementById("signupEmail"),
+        signupNameError: document.getElementById("signupNameError"),
+        signupGenderError: document.getElementById("signupGenderError"),
+        signupAgeError: document.getElementById("signupAgeError"),
+        signupMobileError: document.getElementById("signupMobileError"),
+        signupEmailError: document.getElementById("signupEmailError"),
         loginName: document.getElementById("loginName"),
         loginMobile: document.getElementById("loginMobile"),
+        loginNameError: document.getElementById("loginNameError"),
+        loginMobileError: document.getElementById("loginMobileError"),
         showLoginButton: document.getElementById("showLoginButton"),
         showSignupButton: document.getElementById("showSignupButton"),
         authSwitchSignup: document.getElementById("authSwitchSignup"),
@@ -2968,6 +3045,8 @@
         paymentForm: document.getElementById("paymentForm"),
         utrField: document.getElementById("utrField"),
         paymentConfirmation: document.getElementById("paymentConfirmation"),
+        paymentConsentRow: document.getElementById("paymentConsentRow"),
+        paymentError: document.getElementById("paymentError"),
         timelinePay: document.getElementById("timelinePay"),
         timelineSubmit: document.getElementById("timelineSubmit"),
         timelineVerify: document.getElementById("timelineVerify"),
@@ -3117,9 +3196,87 @@
         if (modal) modal.classList.add("open");
       }
 
+      function updateHomeActions() {
+        var hasProgressToContinue = Boolean(activeUser && hasSavedProgress(progress));
+        var showBothForGuest = !activeUser;
+        elements.playButton.hidden = !showBothForGuest && hasProgressToContinue;
+        elements.continueButton.hidden = !showBothForGuest && !hasProgressToContinue;
+        elements.playButton.setAttribute("aria-hidden", String(elements.playButton.hidden));
+        elements.continueButton.setAttribute("aria-hidden", String(elements.continueButton.hidden));
+      }
+
+      function setAuthError(message) {
+        elements.authError.textContent = message || "";
+        elements.authError.hidden = !message;
+      }
+
+      function setFieldError(field, errorElement, message) {
+        if (!field || !errorElement) return;
+        var hasError = Boolean(message);
+        field.classList.toggle("invalid", hasError);
+        field.setAttribute("aria-invalid", String(hasError));
+        errorElement.textContent = message || "";
+        errorElement.hidden = !hasError;
+      }
+
+      function clearAuthValidation() {
+        setAuthError("");
+        setFieldError(elements.signupName, elements.signupNameError, "");
+        setFieldError(elements.signupGender, elements.signupGenderError, "");
+        setFieldError(elements.signupAge, elements.signupAgeError, "");
+        setFieldError(elements.signupMobile, elements.signupMobileError, "");
+        setFieldError(elements.signupEmail, elements.signupEmailError, "");
+        setFieldError(elements.loginName, elements.loginNameError, "");
+        setFieldError(elements.loginMobile, elements.loginMobileError, "");
+      }
+
+      function validateAuthFields(mode) {
+        clearAuthValidation();
+        var loginMode = mode === "login";
+        var valid = true;
+        var firstInvalid = null;
+        var nameField = loginMode ? elements.loginName : elements.signupName;
+        var nameError = loginMode ? elements.loginNameError : elements.signupNameError;
+        var mobileField = loginMode ? elements.loginMobile : elements.signupMobile;
+        var mobileError = loginMode ? elements.loginMobileError : elements.signupMobileError;
+        var name = nameField.value.trim();
+        var mobileDigits = String(mobileField.value || "").replace(/\D/g, "");
+
+        function invalid(field, errorElement, message) {
+          setFieldError(field, errorElement, message);
+          if (!firstInvalid) firstInvalid = field;
+          valid = false;
+        }
+
+        if (!name) invalid(nameField, nameError, "Please enter the child’s name.");
+        if (mobileDigits.length !== 10) {
+          invalid(mobileField, mobileError, "Please enter a valid 10-digit mobile number.");
+        }
+
+        if (!loginMode) {
+          var gender = elements.signupGender.value;
+          var age = Number(elements.signupAge.value);
+          var email = elements.signupEmail.value.trim();
+          if (!gender) invalid(elements.signupGender, elements.signupGenderError, "Please select a gender.");
+          if (!Number.isInteger(age) || age < 1 || age > 5) {
+            invalid(elements.signupAge, elements.signupAgeError, "Age must be between 1 and 5.");
+          }
+          if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            invalid(elements.signupEmail, elements.signupEmailError, "Please enter a valid email address.");
+          }
+        }
+
+        if (!valid) {
+          setAuthError("Please correct the highlighted fields to continue.");
+          if (firstInvalid) firstInvalid.focus();
+        }
+        return valid;
+      }
+
       function updateAccountUI() {
         var loggedIn = Boolean(activeUser);
         elements.accountButton.hidden = !loggedIn;
+        updateHomeActions();
         if (!loggedIn) {
           elements.accountDropdown.hidden = true;
           elements.accountButton.setAttribute("aria-expanded", "false");
@@ -3162,6 +3319,9 @@
 
       function openAuth(mode) {
         var loginMode = mode === "login";
+        closeModal(elements.resumeModal);
+        closeModal(elements.parentModal);
+        closePaymentReminder();
         elements.accountDropdown.hidden = true;
         elements.accountButton.setAttribute("aria-expanded", "false");
         elements.authTitle.textContent = loginMode ? "Welcome back" : "Create an explorer account";
@@ -3172,6 +3332,7 @@
         elements.loginForm.hidden = !loginMode;
         elements.authSwitchSignup.hidden = loginMode;
         elements.authSwitchLogin.hidden = !loginMode;
+        clearAuthValidation();
         openModal(elements.authModal);
         setTimeout(function () {
           (loginMode ? elements.loginName : elements.signupName).focus();
@@ -3272,8 +3433,11 @@
             checkPaymentStatus(true);
           }, 450);
         } else if (hasSavedProgress(progress)) {
+          updateHomeActions();
+          showScreen("homeScreen");
           showResumeModal();
         } else {
+          updateHomeActions();
           renderStageMap();
           showScreen("stageScreen");
         }
@@ -3293,15 +3457,21 @@
       }
 
       function loginWithDetails(name, mobile) {
+        if (!validateAuthFields("login")) return;
+        name = elements.loginName.value.trim();
+        mobile = elements.loginMobile.value;
         var localUser = findLocalUser(name, mobile);
         if (!isConfigured()) {
           if (localUser) {
             finishLogin(localUser);
           } else {
-            window.alert("No account was found on this device. Please check the name and mobile number.");
+            setAuthError("No account was found. Please check the name and 10-digit mobile number used during signup.");
+            setFieldError(elements.loginName, elements.loginNameError, "Check the name used during signup.");
+            setFieldError(elements.loginMobile, elements.loginMobileError, "Check the mobile number used during signup.");
           }
           return;
         }
+        setAuthError("");
         elements.authSubtitle.textContent = "Checking your saved progress…";
         requestJsonp({ action: "login", name: name, mobile: normalizeMobile(mobile) }, function (response) {
           if (response && response.found) {
@@ -3320,25 +3490,28 @@
             finishLogin(localUser);
             return;
           }
+          if (response && response.ok === false) {
+            setAuthError(response.message || "We could not connect to the account service. Please try again.");
+            return;
+          }
+          setAuthError("No account was found. Please check the name and 10-digit mobile number used during signup.");
           elements.authSubtitle.textContent = "We could not find those details. Please check the name and mobile number.";
         });
       }
 
       function signUp() {
+        if (!validateAuthFields("signup")) return;
         var name = elements.signupName.value.trim();
         var gender = elements.signupGender.value;
         var age = Number(elements.signupAge.value);
         var mobile = normalizeMobile(elements.signupMobile.value);
         var email = elements.signupEmail.value.trim();
-        if (!name || !gender || !age || age < 1 || age > 5 || mobile.length !== 10) {
-          window.alert("Please complete the required fields. Age must be between 1 and 5, and the mobile number must contain 10 digits.");
-          return;
-        }
         var existing = findLocalUser(name, mobile);
         if (existing) {
           openAuth("login");
           elements.loginName.value = name;
           elements.loginMobile.value = mobile;
+          setAuthError("This account already exists. Please log in to continue your saved adventure.");
           elements.authSubtitle.textContent = "This account already exists. Log in to continue.";
           return;
         }
@@ -3848,6 +4021,7 @@
         elements.upiIdText.textContent = "UPI ID: " + CONFIG.upiId;
         elements.utrField.value = progress.paymentUtr || "";
         elements.paymentConfirmation.checked = false;
+        setFieldError(elements.paymentConsentRow, elements.paymentError, "");
         updatePaymentTimeline();
         showPaymentStatus(progress.paymentStatus === "PENDING"
           ? getPendingPaymentMessage()
@@ -3942,9 +4116,10 @@
         if (!activeUser) return;
         var utr = elements.utrField.value.trim();
         if (!elements.paymentConfirmation.checked) {
-          window.alert("Please confirm that the ₹10 payment has been completed.");
+          setFieldError(elements.paymentConsentRow, elements.paymentError, "Please confirm that the ₹10 payment has been completed.");
           return;
         }
+        setFieldError(elements.paymentConsentRow, elements.paymentError, "");
         progress.paymentId = progress.paymentId || makeId("payment");
         progress.paymentUtr = utr;
         progress.paymentStatus = "PENDING";
@@ -4195,6 +4370,31 @@
       elements.loginForm.addEventListener("submit", function (event) {
         event.preventDefault();
         loginWithDetails(elements.loginName.value.trim(), elements.loginMobile.value);
+      });
+
+      [
+        [elements.signupName, elements.signupNameError],
+        [elements.signupGender, elements.signupGenderError],
+        [elements.signupAge, elements.signupAgeError],
+        [elements.signupMobile, elements.signupMobileError],
+        [elements.signupEmail, elements.signupEmailError],
+        [elements.loginName, elements.loginNameError],
+        [elements.loginMobile, elements.loginMobileError]
+      ].forEach(function (pair) {
+        var field = pair[0];
+        var errorElement = pair[1];
+        var clearEditedError = function () {
+          setFieldError(field, errorElement, "");
+          setAuthError("");
+        };
+        field.addEventListener("input", clearEditedError);
+        field.addEventListener("change", clearEditedError);
+      });
+
+      elements.paymentConfirmation.addEventListener("change", function () {
+        if (elements.paymentConfirmation.checked) {
+          setFieldError(elements.paymentConsentRow, elements.paymentError, "");
+        }
       });
 
       elements.showLoginButton.addEventListener("click", function () {
