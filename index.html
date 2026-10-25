@@ -464,46 +464,214 @@
     .orb-item.four { right: 13%; bottom: 12%; transform: rotate(-10deg); }
 
     .welcome-card {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
       margin-top: 18px;
       padding: 18px 20px;
+      overflow: hidden;
       border: 1px solid var(--line);
       border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, 0.76);
-      box-shadow: 0 10px 25px rgba(55, 46, 130, 0.06);
+      background: linear-gradient(115deg, #ffffff 0%, #fff8df 55%, #f0ecff 100%);
+      box-shadow: 0 12px 28px rgba(55, 46, 130, 0.09);
     }
 
-    .welcome-card p {
+    .welcome-card::before,
+    .welcome-card::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .welcome-card::before {
+      width: 130px;
+      height: 130px;
+      right: 18%;
+      bottom: -92px;
+      background: rgba(255, 209, 102, 0.25);
+    }
+
+    .welcome-card::after {
+      width: 90px;
+      height: 90px;
+      top: -55px;
+      right: 4%;
+      background: rgba(115, 230, 194, 0.2);
+    }
+
+    .welcome-copy,
+    .name-field-wrap {
+      position: relative;
+      z-index: 1;
+    }
+
+    .welcome-copy {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .welcome-mascot {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #ffd166, #ffb45d);
+      box-shadow: 0 9px 18px rgba(238, 157, 58, 0.22);
+      font-size: 1.45rem;
+      transform: rotate(-5deg);
+    }
+
+    .welcome-kicker {
+      margin: 0 0 3px;
+      color: var(--purple);
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .welcome-title {
+      margin: 0 0 3px;
+      color: var(--ink);
+      font-size: 1.12rem;
+      font-weight: 900;
+    }
+
+    .welcome-subtitle {
       margin: 0;
       color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.4;
+    }
+
+    .name-field-wrap {
+      display: grid;
+      flex: 0 0 auto;
+      gap: 6px;
+      width: min(270px, 100%);
+    }
+
+    .name-field-label {
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
     .name-field {
-      width: min(270px, 100%);
+      width: 100%;
       min-height: 45px;
       padding: 0 14px;
       border: 1px solid rgba(108, 92, 231, 0.2);
       border-radius: 13px;
       color: var(--ink);
-      background: #fff;
+      background: rgba(255, 255, 255, 0.92);
       font-weight: 700;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .name-field:focus {
+      border-color: rgba(108, 92, 231, 0.55);
+      box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .feature-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 25px;
+    }
+
+    .feature-kicker {
+      margin: 0 0 4px;
+      color: var(--coral);
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .feature-heading h2 {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      letter-spacing: -0.04em;
+    }
+
+    .feature-heading > p {
+      max-width: 310px;
+      margin: 0 0 2px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+      text-align: right;
     }
 
     .feature-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 14px;
-      margin-top: 18px;
+      margin-top: 14px;
     }
 
     .feature-card {
-      padding: 18px;
+      position: relative;
+      min-height: 214px;
+      padding: 20px;
+      overflow: hidden;
       border: 1px solid var(--line);
       border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, 0.75);
+      box-shadow: 0 10px 24px rgba(55, 46, 130, 0.06);
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .feature-card::before {
+      content: "";
+      position: absolute;
+      right: -34px;
+      bottom: -48px;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.42);
+      pointer-events: none;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 17px 30px rgba(55, 46, 130, 0.13);
+    }
+
+    .feature-card-letters {
+      background: linear-gradient(145deg, #eefaff, #e4f8f2);
+    }
+
+    .feature-card-numbers {
+      background: linear-gradient(145deg, #fff8df, #fff0f1);
+    }
+
+    .feature-card-tables {
+      background: linear-gradient(145deg, #f2edff, #e8e5ff);
+    }
+
+    .feature-card-top {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 16px;
     }
 
     .feature-icon {
@@ -511,22 +679,87 @@
       place-items: center;
       width: 45px;
       height: 45px;
-      margin-bottom: 11px;
+      margin: 0;
       border-radius: 15px;
       background: #f0ecff;
       font-size: 1.35rem;
     }
 
+    .feature-card-letters .feature-icon {
+      background: #d8f5ff;
+    }
+
+    .feature-card-numbers .feature-icon {
+      background: #ffe7ac;
+    }
+
+    .feature-card-tables .feature-icon {
+      background: #ddd6ff;
+    }
+
+    .feature-tag {
+      color: rgba(32, 36, 66, 0.56);
+      font-size: 0.62rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
     .feature-card h3 {
+      position: relative;
+      z-index: 1;
       margin-bottom: 6px;
       font-size: 1rem;
     }
 
     .feature-card p {
+      position: relative;
+      z-index: 1;
       margin: 0;
       color: var(--muted);
       font-size: 0.9rem;
       line-height: 1.45;
+    }
+
+    .feature-cta {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 17px;
+      color: var(--purple-dark);
+      font-size: 0.76rem;
+      font-weight: 900;
+    }
+
+    .feature-cta span {
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+
+    .feature-card:hover .feature-cta span {
+      transform: translateX(4px);
+    }
+
+    .home-highlights {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .home-highlight {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 33px;
+      padding: 0 11px;
+      border: 1px solid rgba(108, 92, 231, 0.11);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.78);
+      font-size: 0.72rem;
+      font-weight: 800;
     }
 
     .section-heading {
@@ -1744,12 +1977,50 @@
         padding: 15px;
       }
 
+      .welcome-copy {
+        align-items: flex-start;
+      }
+
+      .name-field-wrap {
+        width: 100%;
+      }
+
       .name-field {
         width: 100%;
       }
 
+      .feature-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+        margin-top: 21px;
+      }
+
+      .feature-heading > p {
+        max-width: 100%;
+        text-align: left;
+      }
+
       .feature-row {
         grid-template-columns: 1fr;
+      }
+
+      .feature-card {
+        min-height: 0;
+        padding: 17px;
+      }
+
+      .home-highlights {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .home-highlight {
+        min-height: 43px;
+        padding: 6px 5px;
+        font-size: 0.66rem;
+        line-height: 1.2;
+        text-align: center;
       }
 
       .section-heading {
@@ -1935,7 +2206,7 @@
         </div>
       </div>
       <div class="top-actions">
-        <div class="auth-actions" aria-label="Account actions">
+        <div class="auth-actions" id="headerAuthActions" aria-label="Account actions">
           <button class="header-auth-button login" id="headerLoginButton" type="button">Log in</button>
           <button class="header-auth-button signup" id="headerSignupButton" type="button">Sign up</button>
         </div>
@@ -1970,32 +2241,63 @@
       </div>
 
       <div class="welcome-card">
-        <div>
-          <p><strong>Who is playing today?</strong></p>
-          <p>Your name stays on this device.</p>
+        <div class="welcome-copy">
+          <span class="welcome-mascot" aria-hidden="true">🌟</span>
+          <div>
+            <p class="welcome-kicker">Your explorer profile</p>
+            <p class="welcome-title">Who is ready to play?</p>
+            <p class="welcome-subtitle">Choose a nickname and make this adventure yours.</p>
+          </div>
         </div>
-        <label>
+        <label class="name-field-wrap">
+          <span class="name-field-label">Explorer name</span>
           <span class="sr-only">Player name</span>
-          <input class="name-field" id="nameField" maxlength="18" placeholder="Type a name (optional)" />
+          <input class="name-field" id="nameField" maxlength="18" placeholder="e.g. Riya (optional)" />
         </label>
       </div>
 
+      <div class="feature-heading">
+        <div>
+          <p class="feature-kicker">Choose your first mission</p>
+          <h2>Three playful ways to learn</h2>
+        </div>
+        <p>Start small, collect stars, and unlock a new surprise at every stage.</p>
+      </div>
+
       <div class="feature-row">
-        <article class="feature-card">
-          <div class="feature-icon">🔤</div>
+        <article class="feature-card feature-card-letters">
+          <div class="feature-card-top">
+            <div class="feature-icon">🔤</div>
+            <span class="feature-tag">LETTER QUEST</span>
+          </div>
           <h3>Letters with pictures</h3>
-          <p>Meet friendly objects and learn which letter begins each word.</p>
+          <p>Match colourful pictures with their starting letters and meet new word friends.</p>
+          <span class="feature-cta">Find a letter <span aria-hidden="true">→</span></span>
         </article>
-        <article class="feature-card">
-          <div class="feature-icon">🔢</div>
+        <article class="feature-card feature-card-numbers">
+          <div class="feature-card-top">
+            <div class="feature-icon">🔢</div>
+            <span class="feature-tag">NUMBER QUEST</span>
+          </div>
           <h3>Numbers to explore</h3>
-          <p>Count bright objects, spot number patterns, and build confidence.</p>
+          <p>Count, compare, and spot number patterns with friendly number buddies.</p>
+          <span class="feature-cta">Count and discover <span aria-hidden="true">→</span></span>
         </article>
-        <article class="feature-card">
-          <div class="feature-icon">✖️</div>
+        <article class="feature-card feature-card-tables">
+          <div class="feature-card-top">
+            <div class="feature-icon">✖️</div>
+            <span class="feature-tag">TABLE QUEST</span>
+          </div>
           <h3>Table Mountain</h3>
-          <p>Reach the final stages and practise multiplication in a fun way.</p>
+          <p>Meet tiny multiplication challenges from Stage 1 and climb to bigger adventures.</p>
+          <span class="feature-cta">Solve a table <span aria-hidden="true">→</span></span>
         </article>
+      </div>
+
+      <div class="home-highlights" aria-label="Adventure features">
+        <span class="home-highlight">⭐ 100 stages</span>
+        <span class="home-highlight">🔊 Friendly voice hints</span>
+        <span class="home-highlight">📱 Made for little screens</span>
       </div>
     </section>
 
@@ -3044,6 +3346,7 @@
         nameField: document.getElementById("nameField"),
         brandButton: document.getElementById("brandButton"),
         homeFromStages: document.getElementById("homeFromStages"),
+        headerAuthActions: document.getElementById("headerAuthActions"),
         headerLoginButton: document.getElementById("headerLoginButton"),
         headerSignupButton: document.getElementById("headerSignupButton"),
         parentButton: document.getElementById("parentButton"),
@@ -3330,6 +3633,12 @@
       function updateAccountUI() {
         var loggedIn = Boolean(activeUser);
         elements.accountButton.hidden = !loggedIn;
+        elements.headerAuthActions.hidden = loggedIn;
+        elements.headerLoginButton.hidden = loggedIn;
+        elements.headerSignupButton.hidden = loggedIn;
+        elements.headerAuthActions.setAttribute("aria-hidden", String(loggedIn));
+        elements.headerLoginButton.setAttribute("aria-hidden", String(loggedIn));
+        elements.headerSignupButton.setAttribute("aria-hidden", String(loggedIn));
         updateHomeActions();
         if (!loggedIn) {
           elements.accountDropdown.hidden = true;
