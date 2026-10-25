@@ -115,6 +115,37 @@
       gap: 8px;
     }
 
+    .auth-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-auth-button {
+      min-height: 42px;
+      padding: 0 13px;
+      border: 1px solid rgba(108, 92, 231, 0.18);
+      border-radius: 14px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 7px 18px rgba(55, 46, 130, 0.07);
+      font-size: 0.8rem;
+      font-weight: 900;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .header-auth-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(55, 46, 130, 0.13);
+    }
+
+    .header-auth-button.signup {
+      color: #fff;
+      background: var(--purple);
+      border-color: transparent;
+      box-shadow: 0 9px 20px rgba(108, 92, 231, 0.25);
+    }
+
     .icon-button,
     .small-button {
       min-height: 42px;
@@ -1547,10 +1578,49 @@
 
       .topbar {
         margin-bottom: 11px;
+        align-items: flex-start;
       }
 
       .topbar-left {
         gap: 6px;
+        flex: 1 1 auto;
+      }
+
+      .top-actions {
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-areas:
+          "auth auth"
+          "sound parent";
+        gap: 5px;
+        flex: 0 0 auto;
+      }
+
+      .auth-actions {
+        grid-area: auth;
+        justify-content: flex-end;
+      }
+
+      .header-auth-button {
+        min-height: 36px;
+        padding: 0 9px;
+        border-radius: 11px;
+        font-size: 0.72rem;
+      }
+
+      .top-actions .icon-button {
+        grid-area: sound;
+        width: 36px;
+        min-height: 36px;
+        border-radius: 11px;
+      }
+
+      .top-actions .small-button {
+        grid-area: parent;
+        min-height: 36px;
+        padding: 0 8px;
+        border-radius: 11px;
+        font-size: 0.7rem;
       }
 
       .account-button {
@@ -1818,6 +1888,10 @@
         </div>
       </div>
       <div class="top-actions">
+        <div class="auth-actions" aria-label="Account actions">
+          <button class="header-auth-button login" id="headerLoginButton" type="button">Log in</button>
+          <button class="header-auth-button signup" id="headerSignupButton" type="button">Sign up</button>
+        </div>
         <button class="icon-button" id="soundButton" type="button" aria-label="Toggle sound">🔊</button>
         <button class="small-button" id="parentButton" type="button">Parent Zone</button>
       </div>
@@ -2847,6 +2921,8 @@
         nameField: document.getElementById("nameField"),
         brandButton: document.getElementById("brandButton"),
         homeFromStages: document.getElementById("homeFromStages"),
+        headerLoginButton: document.getElementById("headerLoginButton"),
+        headerSignupButton: document.getElementById("headerSignupButton"),
         parentButton: document.getElementById("parentButton"),
         soundButton: document.getElementById("soundButton"),
         parentModal: document.getElementById("parentModal"),
@@ -3086,6 +3162,8 @@
 
       function openAuth(mode) {
         var loginMode = mode === "login";
+        elements.accountDropdown.hidden = true;
+        elements.accountButton.setAttribute("aria-expanded", "false");
         elements.authTitle.textContent = loginMode ? "Welcome back" : "Create an explorer account";
         elements.authSubtitle.textContent = loginMode
           ? "Use the same name and mobile number to find the saved adventure."
@@ -4016,6 +4094,14 @@
         } else {
           openAuth("login");
         }
+      });
+
+      elements.headerLoginButton.addEventListener("click", function () {
+        openAuth("login");
+      });
+
+      elements.headerSignupButton.addEventListener("click", function () {
+        openAuth("signup");
       });
 
       elements.nameField.addEventListener("input", function () {
