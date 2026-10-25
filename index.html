@@ -2982,6 +2982,60 @@
         mix: ["🧩", "🔤", "🔢", "🎨", "🦄", "🔺", "🌼", "☁️", "🗝️", "🌈"],
         table: ["✖️", "🚀", "🦖", "🌴", "🐠", "🏰", "🪐", "⛰️", "🏅", "🏆"]
       };
+      var correctAnswerVoiceLines = [
+        "Good job!",
+        "Excellent!",
+        "Great thinking!",
+        "Brilliant answer!",
+        "Super work!",
+        "You got it!",
+        "Wonderful!",
+        "Fantastic!",
+        "That is right!",
+        "Amazing thinking!",
+        "You are doing great!",
+        "High five, clever explorer!"
+      ];
+      var wrongAnswerVoiceLines = [
+        "Good try! Keep going!",
+        "Almost there! Try the next one.",
+        "Nice effort! You are learning.",
+        "No worries. Keep exploring!",
+        "That was a brave try. Try again next time.",
+        "Keep going, little explorer!",
+        "You are getting closer!",
+        "Take a breath and try the next one.",
+        "Every try helps your brain grow!",
+        "It is okay to make mistakes. Keep learning!",
+        "Stay curious and give the next one a try!",
+        "You can do it. Keep smiling and keep playing!"
+      ];
+      var numberWords = [
+        "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+        "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"
+      ];
+      var stageCompletionVoiceLines = [
+        "Fantastic work! You completed Stage {stage}, {name}.",
+        "Hooray! {name} is complete. You were brave and clever!",
+        "Amazing explorer! You finished Stage {stage}.",
+        "Wonderful job! You conquered {name}.",
+        "Super star moment! Stage {stage} is complete.",
+        "That was brilliant! You made it through {name}.",
+        "You did it! Stage {stage} is now part of your learning story.",
+        "Incredible effort! You completed {name}.",
+        "High five, little explorer! Stage {stage} is complete.",
+        "Great job! You unlocked the next step after {name}.",
+        "Fantastic focus! You finished Stage {stage}.",
+        "What a clever adventure! {name} is complete.",
+        "Brilliant learner! You completed {name}.",
+        "You are doing wonderfully! Stage {stage} is complete.",
+        "Super work! You solved the challenge in {name}.",
+        "Amazing progress! You finished Stage {stage}.",
+        "Well done, champion! {name} is complete.",
+        "You made it! Stage {stage} is complete.",
+        "Wonderful explorer work! You completed {name}.",
+        "That was awesome! Stage {stage} is complete. Keep going!"
+      ];
 
       var elements = {
         screens: document.querySelectorAll(".screen"),
@@ -3696,7 +3750,31 @@
         }
       }
 
+      function numberWordFor(value) {
+        var number = Number(value);
+        return Number.isInteger(number) && number >= 0 && numberWords[number]
+          ? numberWords[number]
+          : String(value);
+      }
+
+      function getCorrectAnswerDisplay(question) {
+        if (question.kind === "alphabet") {
+          var letterItem = alphabet.filter(function (entry) {
+            return entry.letter === String(question.answer);
+          })[0];
+          return letterItem ? letterItem.letter + " — " + letterItem.word : String(question.answer);
+        }
+        if (question.kind === "multiplication") {
+          return question.equationDisplay || question.voiceAnswer || String(question.answer);
+        }
+        if (question.kind === "number") {
+          return String(question.answer) + " (" + numberWordFor(question.answer) + ")";
+        }
+        return String(question.answer);
+      }
+
       function getAnswerVoiceDetail(question) {
+        if (question.voiceAnswer) return question.voiceAnswer;
         if (question.kind === "alphabet") {
           var letterItem = alphabet.filter(function (entry) {
             return entry.letter === String(question.answer);
@@ -3708,12 +3786,47 @@
         if (question.kind === "multiplication") {
           return "The correct answer is " + question.answer + ".";
         }
+        if (question.kind === "number") {
+          return "The correct answer is " + question.answer + ", " + numberWordFor(question.answer) + ".";
+        }
         return "The answer is " + question.answer + ".";
       }
 
+      function getWrongAnswerVoiceDetail(question) {
+        if (question.kind === "multiplication" && question.voiceAnswer) {
+          return "The correct answer is " + question.voiceAnswer;
+        }
+        if (question.kind === "alphabet") {
+          var letterItem = alphabet.filter(function (entry) {
+            return entry.letter === String(question.answer);
+          })[0];
+          return letterItem
+            ? "The correct answer is " + letterItem.letter + " for " + letterItem.word + "."
+            : "The correct answer is " + question.answer + ".";
+        }
+        if (question.kind === "number") {
+          return "The correct answer is " + question.answer + ", " + numberWordFor(question.answer) + ".";
+        }
+        return "The correct answer is " + question.answer + ". You can remember it and try the next one.";
+      }
+
+      function getAnswerFeedbackLine(correct) {
+        var lines = correct ? correctAnswerVoiceLines : wrongAnswerVoiceLines;
+        return lines[(currentStage * QUESTIONS_PER_STAGE + currentQuestionIndex) % lines.length];
+      }
+
+      function speakAnswerFeedback(question, correct) {
+        var encouragement = getAnswerFeedbackLine(correct);
+        var detail = correct ? getAnswerVoiceDetail(question) : getWrongAnswerVoiceDetail(question);
+        speakText(encouragement + " " + detail);
+      }
+
       function speakCorrectAnswer(question) {
-        var praise = correctAnswerVoiceLines[(currentStage * 3 + currentQuestionIndex) % correctAnswerVoiceLines.length];
-        speakText(praise + " " + getAnswerVoiceDetail(question));
+        speakAnswerFeedback(question, true);
+      }
+
+      function speakWrongAnswer(question) {
+        speakAnswerFeedback(question, false);
       }
 
       function speakStageCompletion(stage, stars) {
@@ -3850,32 +3963,40 @@
       }
 
       function makeMultiplicationQuestion(stage, index) {
-        var maxTable = stage < 61 ? 5 : (stage < 81 ? 10 : 12);
-        var left = randomInt(2, maxTable);
-        var right = randomInt(1, 10);
+        var maxLeft = stage <= 10 ? 3 : (stage <= 30 ? 5 : (stage <= 60 ? 7 : (stage <= 80 ? 10 : 12)));
+        var maxRight = stage <= 10 ? 3 : (stage <= 30 ? 5 : (stage <= 80 ? 10 : 12));
+        var left = randomInt(1, maxLeft);
+        var right = randomInt(1, maxRight);
         var answer = left * right;
-        var mode = stage < 61 ? 0 : (stage + index) % 3;
+        var equationDisplay = left + " × " + right + " = " + answer;
+        var mode = stage <= 10 ? 0 : (stage + index) % 3;
         var prompt;
         var visual;
         var correctAnswer;
+        var voiceAnswer;
         if (mode === 1) {
           prompt = "Which number is missing? " + left + " × ? = " + answer;
           visual = '<span class="multiply-card">' + left + "</span><span class=\"multiply-sign\">×</span><span class=\"multiply-card\">?</span><span class=\"multiply-sign\">=</span><span class=\"multiply-card\">" + answer + "</span>";
           correctAnswer = right;
+          voiceAnswer = "The missing number is " + right + ". " + left + " times " + right + " makes " + answer + ".";
         } else if (mode === 2) {
           prompt = "Which number is missing? ? × " + right + " = " + answer;
           visual = '<span class="multiply-card">?</span><span class="multiply-sign">×</span><span class="multiply-card">' + right + "</span><span class=\"multiply-sign\">=</span><span class=\"multiply-card\">" + answer + "</span>";
           correctAnswer = left;
+          voiceAnswer = "The missing number is " + left + ". " + left + " times " + right + " makes " + answer + ".";
         } else {
           prompt = "Solve this table challenge: " + left + " × " + right + " = ?";
           visual = '<span class="multiply-card">' + left + "</span><span class=\"multiply-sign\">×</span><span class=\"multiply-card\">" + right + "</span><span class=\"multiply-sign\">=</span><span class=\"multiply-card\">?</span>";
           correctAnswer = answer;
+          voiceAnswer = left + " times " + right + " equals " + answer + ".";
         }
         return {
           kind: "multiplication",
           prompt: prompt,
           visual: visual,
           answer: correctAnswer,
+          voiceAnswer: voiceAnswer,
+          equationDisplay: equationDisplay,
           options: makeOptions(correctAnswer, [answer - left, answer + left, answer - right, answer + right, left + right, left * (right + 1)].filter(function (value) {
             return value > 0;
           })),
@@ -3884,10 +4005,9 @@
       }
 
       function buildQuestionTypes(stage) {
-        if (stage <= 10) return ["alphabet", "alphabet", "alphabet", "alphabet", "alphabet"];
-        if (stage <= 20) return ["number", "number", "number", "number", "number"];
-        if (stage <= 30) return shuffle(["alphabet", "alphabet", "number", "number", "number"]);
-        return shuffle(["alphabet", "number", "multiplication", "multiplication", "alphabet"]);
+        if (stage <= 10) return shuffle(["alphabet", "number", "multiplication", "alphabet", "number"]);
+        if (stage <= 30) return shuffle(["alphabet", "number", "multiplication", "multiplication", "number"]);
+        return shuffle(["alphabet", "number", "multiplication", "multiplication", "multiplication"]);
       }
 
       function generateQuestions(stage) {
@@ -3965,14 +4085,16 @@
           currentScore += 100;
           clickedButton.classList.add("correct");
           elements.feedback.classList.add("show", "good");
-          elements.feedbackText.textContent = "Brilliant! Your brain is shining. 🌟";
+          elements.feedbackText.textContent = getAnswerFeedbackLine(true) + " Correct answer: " + getCorrectAnswerDisplay(question) + ". Your brain is shining. 🌟";
           playTone(true);
+          speakCorrectAnswer(question);
           createConfetti();
         } else {
           clickedButton.classList.add("wrong");
           elements.feedback.classList.add("show");
-          elements.feedbackText.textContent = "Nice try! The answer is " + question.answer + ". Keep going! 💛";
+          elements.feedbackText.textContent = getAnswerFeedbackLine(false) + " Correct answer: " + getCorrectAnswerDisplay(question) + ". Keep going! 💛";
           playTone(false);
+          speakWrongAnswer(question);
         }
         elements.scoreLabel.textContent = currentScore + " points";
       }
