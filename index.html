@@ -78,6 +78,65 @@
       margin-bottom: 18px;
     }
 
+    .page-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 38px;
+      margin: -5px 0 14px;
+    }
+
+    .page-back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 38px;
+      padding: 0 12px;
+      border: 1px solid rgba(108, 92, 231, 0.15);
+      border-radius: 12px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 7px 18px rgba(55, 46, 130, 0.06);
+      font-size: 0.78rem;
+      font-weight: 900;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    .page-back-button:not(:disabled):hover {
+      transform: translateX(-2px);
+      box-shadow: 0 10px 22px rgba(55, 46, 130, 0.11);
+    }
+
+    .page-back-button:disabled {
+      cursor: default;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.58);
+      box-shadow: none;
+      opacity: 0.72;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px;
+      flex: 1 1 auto;
+      min-width: 0;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .breadcrumb-current {
+      color: var(--purple-dark);
+    }
+
+    .breadcrumb-separator {
+      color: rgba(110, 113, 144, 0.6);
+    }
+
     .topbar-left {
       position: relative;
       display: flex;
@@ -1476,6 +1535,11 @@
       background: #fff;
     }
 
+    .qr-image[hidden],
+    .qr-placeholder[hidden] {
+      display: none;
+    }
+
     .qr-placeholder {
       display: grid;
       place-items: center;
@@ -1563,6 +1627,43 @@
       background: var(--purple);
       font-size: 0.72rem;
       font-weight: 900;
+    }
+
+    .phonepe-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      min-height: 45px;
+      margin-top: 2px;
+      padding: 0 14px;
+      border: 1px solid rgba(95, 37, 159, 0.18);
+      border-radius: 12px;
+      color: #fff;
+      background: linear-gradient(135deg, #5f259f, #7b3fd5);
+      box-shadow: 0 9px 18px rgba(95, 37, 159, 0.18);
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .phonepe-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 22px rgba(95, 37, 159, 0.24);
+    }
+
+    .phonepe-button:focus-visible {
+      outline: 3px solid rgba(95, 37, 159, 0.22);
+      outline-offset: 2px;
+    }
+
+    .phonepe-help {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.71rem;
+      font-weight: 700;
+      line-height: 1.35;
+      text-align: center;
     }
 
     .payment-status {
@@ -1859,6 +1960,21 @@
       .topbar {
         margin-bottom: 11px;
         align-items: flex-start;
+      }
+
+      .page-nav {
+        margin: -3px 0 10px;
+      }
+
+      .page-back-button {
+        min-height: 36px;
+        padding: 0 10px;
+        border-radius: 11px;
+        font-size: 0.72rem;
+      }
+
+      .breadcrumbs {
+        font-size: 0.68rem;
       }
 
       .topbar-left {
@@ -2215,6 +2331,11 @@
       </div>
     </header>
 
+    <nav class="page-nav" id="pageNav" aria-label="Page navigation">
+      <button class="page-back-button" id="pageBackButton" type="button">← Back</button>
+      <div class="breadcrumbs" id="breadcrumbs" aria-live="polite"></div>
+    </nav>
+
     <section class="screen active" id="homeScreen" aria-labelledby="homeTitle">
       <div class="hero">
         <div class="hero-copy">
@@ -2513,7 +2634,9 @@
             <span id="upiIdText">UPI ID: Add your UPI ID</span>
             <button class="copy-upi" id="copyUpiButton" type="button">Copy</button>
           </div>
-          <p class="form-help">Scan the QR code and pay ₹10. The UTR or transaction ID is optional, but adding it can help us verify your payment faster.</p>
+          <button class="phonepe-button" id="phonePeButton" type="button">📲 Pay ₹10 via PhonePe</button>
+          <p class="phonepe-help">PhonePe will open with ₹10 pre-filled for this UPI ID.</p>
+          <p class="form-help">You can also scan the QR code and pay ₹10. After payment, return here and confirm it below. The UTR or transaction ID is optional.</p>
           <form class="payment-form" id="paymentForm" novalidate>
             <div class="form-field">
               <label for="utrField">UPI UTR / transaction ID <span class="optional-label">(Optional)</span></label>
@@ -3220,7 +3343,7 @@
        */
       var CONFIG = {
         appsScriptUrl: "https://script.google.com/macros/s/AKfycbxdYN-g2VHGPsS5TX1Wy1audaKDdjgswC9LGU5CxvOgSbsP0vb6xOxubkOIZRNAIzgbhg/exec",
-        upiId: "Scan the QR code",
+        upiId: "bankstat@ybl",
         upiQrImage: "assets/upi-qr.jpeg",
         subscriptionAmount: 10
       };
@@ -3235,6 +3358,10 @@
       var currentScore = 0;
       var currentCorrect = 0;
       var hasAnswered = false;
+      var lastAnswerValue = null;
+      var lastAnswerCorrect = false;
+      var currentScreen = "homeScreen";
+      var routeRestoreInProgress = false;
       var paymentPollTimer = null;
       var appState = loadAppState();
       var activeUser = null;
@@ -3346,6 +3473,9 @@
         nameField: document.getElementById("nameField"),
         brandButton: document.getElementById("brandButton"),
         homeFromStages: document.getElementById("homeFromStages"),
+        pageNav: document.getElementById("pageNav"),
+        pageBackButton: document.getElementById("pageBackButton"),
+        breadcrumbs: document.getElementById("breadcrumbs"),
         headerAuthActions: document.getElementById("headerAuthActions"),
         headerLoginButton: document.getElementById("headerLoginButton"),
         headerSignupButton: document.getElementById("headerSignupButton"),
@@ -3399,6 +3529,7 @@
         qrPlaceholder: document.getElementById("qrPlaceholder"),
         upiIdText: document.getElementById("upiIdText"),
         copyUpiButton: document.getElementById("copyUpiButton"),
+        phonePeButton: document.getElementById("phonePeButton"),
         paymentForm: document.getElementById("paymentForm"),
         utrField: document.getElementById("utrField"),
         paymentConfirmation: document.getElementById("paymentConfirmation"),
@@ -3503,6 +3634,42 @@
         saveAppState();
       }
 
+      function saveNavigationState(screenId) {
+        if (!activeUser) return;
+        activeUser.gameSession = activeUser.gameSession || {};
+        activeUser.gameSession.screen = screenId;
+        activeUser.gameSession.updatedAt = new Date().toISOString();
+        persistLocalUser();
+      }
+
+      function saveGameSession(options) {
+        if (!activeUser) return;
+        options = options || {};
+        activeUser.gameSession = {
+          screen: options.screen || currentScreen,
+          stage: currentStage,
+          questionIndex: currentQuestionIndex,
+          score: currentScore,
+          correct: currentCorrect,
+          hasAnswered: hasAnswered,
+          selectedValue: lastAnswerValue,
+          lastAnswerCorrect: lastAnswerCorrect,
+          feedbackText: elements.feedbackText ? elements.feedbackText.textContent : "",
+          questions: currentQuestions,
+          complete: Boolean(options.complete),
+          completionStars: Number(options.completionStars) || 0,
+          updatedAt: new Date().toISOString()
+        };
+        persistLocalUser();
+      }
+
+      function clearCompletionState() {
+        if (!activeUser || !activeUser.gameSession) return;
+        activeUser.gameSession.complete = false;
+        activeUser.gameSession.updatedAt = new Date().toISOString();
+        persistLocalUser();
+      }
+
       function normalizeMobile(value) {
         return String(value || "").replace(/\D/g, "").slice(-10);
       }
@@ -3538,10 +3705,66 @@
         return CONFIG.appsScriptUrl && CONFIG.appsScriptUrl.indexOf("PASTE_") !== 0;
       }
 
-      function showScreen(screenId) {
+      function getRouteForScreen(screenId) {
+        if (screenId === "stageScreen") return "#stages";
+        if (screenId === "gameScreen") return "#game/" + currentStage + "/" + currentQuestionIndex;
+        return "#home";
+      }
+
+      function setRoute(route, replaceHistory) {
+        if (window.location.hash === route) return;
+        var method = replaceHistory ? "replaceState" : "pushState";
+        window.history[method]({ sparkQuestRoute: route }, "", window.location.pathname + window.location.search + route);
+      }
+
+      function parseRoute() {
+        var raw = String(window.location.hash || "").replace(/^#/, "");
+        if (!raw || raw === "home") return { screen: "homeScreen", explicit: Boolean(raw) };
+        if (raw === "stages") return { screen: "stageScreen", explicit: true };
+        var parts = raw.split("/");
+        if (parts[0] === "game") {
+          var stage = Number(parts[1]);
+          var question = Number(parts[2]);
+          if (Number.isInteger(stage) && stage >= 1 && stage <= TOTAL_STAGES && Number.isInteger(question) && question >= 0 && question < QUESTIONS_PER_STAGE) {
+            return { screen: "gameScreen", stage: stage, question: question, explicit: true };
+          }
+          return { screen: "homeScreen", explicit: true, invalid: true };
+        }
+        return { screen: "homeScreen", explicit: true, invalid: true };
+      }
+
+      function updateNavigation(screenId) {
+        var crumbs = [{ label: "Home", current: screenId === "homeScreen" }];
+        if (screenId === "stageScreen") {
+          crumbs.push({ label: "Learning map", current: true });
+        } else if (screenId === "gameScreen") {
+          crumbs.push({ label: "Learning map", current: false });
+          crumbs.push({ label: "Stage " + currentStage + " · " + getStageName(currentStage), current: false });
+          crumbs.push({ label: "Question " + (currentQuestionIndex + 1), current: true });
+        }
+        elements.breadcrumbs.innerHTML = crumbs.map(function (crumb, index) {
+          var separator = index ? '<span class="breadcrumb-separator" aria-hidden="true">›</span>' : "";
+          var className = crumb.current ? "breadcrumb-current" : "";
+          return separator + '<span class="' + className + '">' + escapeHtml(crumb.label) + "</span>";
+        }).join("");
+        elements.pageBackButton.disabled = screenId === "homeScreen";
+        elements.pageBackButton.setAttribute("aria-disabled", String(screenId === "homeScreen"));
+        elements.pageBackButton.setAttribute("aria-label", screenId === "homeScreen" ? "Back unavailable on home" : "Go back to the previous page");
+      }
+
+      function showScreen(screenId, options) {
+        options = options || {};
+        currentScreen = screenId;
         elements.screens.forEach(function (screen) {
           screen.classList.toggle("active", screen.id === screenId);
         });
+        updateNavigation(screenId);
+        if (!options.skipHistory && !routeRestoreInProgress) {
+          setRoute(getRouteForScreen(screenId), Boolean(options.replaceHistory));
+        }
+        if (activeUser && screenId !== "gameScreen") {
+          saveNavigationState(screenId);
+        }
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
@@ -3988,6 +4211,109 @@
         }
       }
 
+      function isStageAccessible(stage) {
+        return progress.paid ? stage >= 1 && stage <= TOTAL_STAGES : stage >= 1 && stage <= Math.min(3, progress.unlocked);
+      }
+
+      function restoreCompletionModal(session) {
+        var stars = Number(session.completionStars) || Number(progress.stars[currentStage]) || 1;
+        elements.completeEmoji.textContent = stars === 3 ? "🏆" : (stars === 2 ? "🌟" : "💪");
+        elements.completeTitle.textContent = stars === 3 ? "Badge unlocked!" : "Stage complete!";
+        elements.completeMessage.textContent =
+          "Well done, " + titleCaseName() + "! You completed " + getStageName(currentStage) + ", got " + currentCorrect + " out of " + QUESTIONS_PER_STAGE + " right, and earned " + currentScore + " points.";
+        elements.completeStars.textContent = starsText(stars);
+        elements.nextStageButton.textContent = currentStage >= TOTAL_STAGES ? "Play again" : "Next stage";
+        openModal(elements.completeModal);
+      }
+
+      function restoreRouteFromLocation() {
+        routeRestoreInProgress = true;
+        var route = parseRoute();
+        var session = activeUser && activeUser.gameSession;
+
+        if (route.invalid) {
+          route = { screen: "homeScreen", explicit: true };
+          setRoute("#home", true);
+        }
+
+        if (!activeUser) {
+          showScreen("homeScreen", { skipHistory: true });
+          if (window.location.hash !== "#home") setRoute("#home", true);
+          routeRestoreInProgress = false;
+          return;
+        }
+
+        if (!route.explicit && session && session.screen === "gameScreen" && Number.isInteger(Number(session.stage))) {
+          route = {
+            screen: "gameScreen",
+            stage: Math.max(1, Math.min(TOTAL_STAGES, Number(session.stage))),
+            question: Math.max(0, Math.min(QUESTIONS_PER_STAGE - 1, Number(session.questionIndex) || 0)),
+            explicit: false
+          };
+        } else if (!route.explicit && session && session.screen === "stageScreen") {
+          route = { screen: "stageScreen", explicit: false };
+        }
+
+        if (route.screen === "stageScreen") {
+          renderStageMap();
+          showScreen("stageScreen", { skipHistory: true });
+          if (!route.explicit) setRoute("#stages", true);
+          routeRestoreInProgress = false;
+          return;
+        }
+
+        if (route.screen === "gameScreen") {
+          if (!isStageAccessible(route.stage) || (!progress.paid && route.stage >= 3)) {
+            renderStageMap();
+            showScreen("stageScreen", { skipHistory: true });
+            setRoute("#stages", true);
+            if (!progress.paid && route.stage >= 3) openPaymentModal();
+            routeRestoreInProgress = false;
+            return;
+          }
+
+          var sessionMatches = session && Number(session.stage) === route.stage && Array.isArray(session.questions) && session.questions.length === QUESTIONS_PER_STAGE;
+          currentStage = route.stage;
+          currentQuestionIndex = route.question;
+          currentScore = sessionMatches ? Number(session.score) || 0 : 0;
+          currentCorrect = sessionMatches ? Number(session.correct) || 0 : 0;
+          lastAnswerValue = null;
+          lastAnswerCorrect = false;
+          currentQuestions = sessionMatches ? session.questions : generateQuestions(route.stage);
+          showScreen("gameScreen", { skipHistory: true });
+          elements.gameStageLabel.textContent = "Stage " + route.stage;
+          elements.gameStageTopic.textContent = getTopic(route.stage) + " • " + getStageName(route.stage);
+          var restoreAnswer = sessionMatches && Number(session.questionIndex) === route.question && session.hasAnswered ? session : null;
+          renderQuestion(restoreAnswer);
+          saveGameSession({
+            complete: Boolean(restoreAnswer && session.complete),
+            completionStars: sessionMatches ? session.completionStars : 0
+          });
+          if (restoreAnswer && session.complete) restoreCompletionModal(session);
+          if (!route.explicit) setRoute(getRouteForScreen("gameScreen"), true);
+          routeRestoreInProgress = false;
+          return;
+        }
+
+        showScreen("homeScreen", { skipHistory: true });
+        if (!route.explicit) setRoute("#home", true);
+        routeRestoreInProgress = false;
+      }
+
+      function goBackToPreviousPage() {
+        closeModal(elements.completeModal);
+        closeModal(elements.authModal);
+        closeModal(elements.paymentModal);
+        closePaymentReminder();
+        clearCompletionState();
+        if (currentScreen === "gameScreen") {
+          renderStageMap();
+          showScreen("stageScreen");
+        } else if (currentScreen === "stageScreen") {
+          showScreen("homeScreen");
+        }
+      }
+
       function updateStageJourney(unlocked) {
         var completedCount = Object.keys(progress.stars || {}).length;
         var targetStage = progress.paid
@@ -4327,7 +4653,8 @@
         });
       }
 
-      function startStage(stage) {
+      function startStage(stage, options) {
+        options = options || {};
         if (!activeUser) {
           openAuth("login");
           return;
@@ -4344,19 +4671,29 @@
           return;
         }
         currentStage = stage;
-        currentQuestionIndex = 0;
+        currentQuestionIndex = Number.isInteger(options.questionIndex)
+          ? Math.max(0, Math.min(QUESTIONS_PER_STAGE - 1, options.questionIndex))
+          : 0;
         currentScore = 0;
         currentCorrect = 0;
-        currentQuestions = generateQuestions(stage);
-        showScreen("gameScreen");
+        lastAnswerValue = null;
+        lastAnswerCorrect = false;
+        currentQuestions = Array.isArray(options.questions) && options.questions.length === QUESTIONS_PER_STAGE
+          ? options.questions
+          : generateQuestions(stage);
+        showScreen("gameScreen", { skipHistory: Boolean(options.skipHistory), replaceHistory: Boolean(options.replaceHistory) });
         elements.gameStageLabel.textContent = "Stage " + stage;
         elements.gameStageTopic.textContent = getTopic(stage) + " • " + getStageName(stage);
-        renderQuestion();
+        renderQuestion(options.answerState || null);
+        saveGameSession({ complete: false });
       }
 
-      function renderQuestion() {
+      function renderQuestion(restoredAnswer) {
         var question = currentQuestions[currentQuestionIndex];
         hasAnswered = false;
+        lastAnswerValue = null;
+        lastAnswerCorrect = false;
+        updateNavigation("gameScreen");
         elements.questionKicker.textContent = "Question " + (currentQuestionIndex + 1) + " of " + QUESTIONS_PER_STAGE;
         elements.questionPrompt.textContent = question.prompt;
         elements.questionVisual.className = "question-visual question-" + question.kind;
@@ -4378,6 +4715,29 @@
           });
           elements.answerGrid.appendChild(button);
         });
+        if (restoredAnswer && restoredAnswer.hasAnswered) {
+          restoreAnswerState(restoredAnswer);
+        }
+      }
+
+      function restoreAnswerState(answerState) {
+        var question = currentQuestions[currentQuestionIndex];
+        hasAnswered = true;
+        lastAnswerValue = answerState.selectedValue;
+        lastAnswerCorrect = Boolean(answerState.lastAnswerCorrect);
+        elements.answerGrid.querySelectorAll(".answer-option").forEach(function (button) {
+          button.disabled = true;
+          if (button.getAttribute("aria-label") === "Answer " + question.answer) {
+            button.classList.add("correct");
+          }
+          if (!lastAnswerCorrect && String(answerState.selectedValue) === button.getAttribute("aria-label").replace("Answer ", "")) {
+            button.classList.add("wrong");
+          }
+        });
+        elements.feedback.className = "feedback show" + (lastAnswerCorrect ? " good" : "");
+        elements.feedbackText.textContent = answerState.feedbackText || (lastAnswerCorrect
+          ? getAnswerFeedbackLine(true) + " Correct answer: " + getCorrectAnswerDisplay(question) + ". Your brain is shining. 🌟"
+          : getAnswerFeedbackLine(false) + " Correct answer: " + getCorrectAnswerDisplay(question) + ". Keep going! 💛");
       }
 
       function chooseAnswer(value, clickedButton) {
@@ -4385,6 +4745,8 @@
         hasAnswered = true;
         var question = currentQuestions[currentQuestionIndex];
         var correct = String(value) === String(question.answer);
+        lastAnswerValue = value;
+        lastAnswerCorrect = correct;
         elements.answerGrid.querySelectorAll(".answer-option").forEach(function (button) {
           button.disabled = true;
           if (button.getAttribute("aria-label") === "Answer " + question.answer) button.classList.add("correct");
@@ -4406,6 +4768,7 @@
           speakWrongAnswer(question);
         }
         elements.scoreLabel.textContent = currentScore + " points";
+        saveGameSession({ complete: false });
       }
 
       function finishStage() {
@@ -4424,6 +4787,7 @@
           "Well done, " + titleCaseName() + "! You completed " + getStageName(currentStage) + ", got " + currentCorrect + " out of " + QUESTIONS_PER_STAGE + " right, and earned " + currentScore + " points.";
         elements.completeStars.textContent = starsText(stars);
         elements.nextStageButton.textContent = currentStage >= TOTAL_STAGES ? "Play again" : "Next stage";
+        saveGameSession({ complete: true, completionStars: stars });
         openModal(elements.completeModal);
         playTone(true);
         speakStageCompletion(currentStage, stars);
@@ -4437,6 +4801,8 @@
         }
         currentQuestionIndex += 1;
         renderQuestion();
+        saveGameSession({ complete: false });
+        setRoute(getRouteForScreen("gameScreen"), true);
       }
 
       function openPaymentModal() {
@@ -4628,6 +4994,49 @@
         }
       }
 
+      function buildUpiPaymentQuery() {
+        progress.paymentId = progress.paymentId || makeId("payment");
+        persistLocalUser();
+        var referenceId = String(progress.paymentId).replace(/[^A-Za-z0-9]/g, "").slice(0, 35);
+        return [
+          "pa=" + encodeURIComponent(CONFIG.upiId),
+          "pn=" + encodeURIComponent("SparkQuest Kids"),
+          "tr=" + encodeURIComponent(referenceId),
+          "tn=" + encodeURIComponent("SparkQuest Adventure Pass"),
+          "am=" + encodeURIComponent(Number(CONFIG.subscriptionAmount).toFixed(2)),
+          "cu=INR"
+        ].join("&");
+      }
+
+      function openPhonePe() {
+        if (!activeUser) {
+          openAuth("login");
+          return;
+        }
+        if (!CONFIG.upiId || CONFIG.upiId.indexOf("@") === -1) {
+          showPaymentStatus("The PhonePe payment ID is not configured yet. Please use the QR code.", "error");
+          return;
+        }
+        var userAgent = navigator.userAgent || "";
+        var isMobile = /Android|iPhone|iPad|iPod/i.test(userAgent);
+        if (!isMobile) {
+          showPaymentStatus("PhonePe payment opens on a mobile device. On desktop, scan the QR code or use the UPI ID above.", "error");
+          return;
+        }
+        var query = buildUpiPaymentQuery();
+        var phonePeUrl = /Android/i.test(userAgent)
+          ? "intent://pay?" + query + "#Intent;scheme=upi;package=com.phonepe.app;end"
+          : "phonepe://pay?" + query;
+        var fallbackUrl = "upi://pay?" + query;
+        showPaymentStatus("Opening PhonePe with ₹10 pre-filled for " + CONFIG.upiId + "…", "");
+        window.location.href = phonePeUrl;
+        window.setTimeout(function () {
+          if (document.visibilityState !== "visible") return;
+          showPaymentStatus("PhonePe did not open. Opening the UPI app chooser so you can complete the ₹10 payment.", "");
+          window.location.href = fallbackUrl;
+        }, 1400);
+      }
+
       function speakCurrentQuestion() {
         if (!currentQuestions[currentQuestionIndex]) return;
         speakText(currentQuestions[currentQuestionIndex].speech);
@@ -4734,6 +5143,11 @@
         renderStageMap();
         showScreen("stageScreen");
       });
+
+      elements.pageBackButton.addEventListener("click", goBackToPreviousPage);
+
+      window.addEventListener("popstate", restoreRouteFromLocation);
+      window.addEventListener("hashchange", restoreRouteFromLocation);
 
       elements.parentButton.addEventListener("click", function () {
         openModal(elements.parentModal);
@@ -4874,6 +5288,7 @@
         checkPaymentStatus(false);
       });
       elements.copyUpiButton.addEventListener("click", copyUpi);
+      elements.phonePeButton.addEventListener("click", openPhonePe);
       elements.closePaymentButton.addEventListener("click", function () {
         closeModal(elements.paymentModal);
         renderStageMap();
@@ -4931,12 +5346,14 @@
       window.addEventListener("keydown", function (event) {
         if (event.key === "Escape") {
           var paymentWasOpen = elements.paymentModal.classList.contains("open");
+          var completionWasOpen = elements.completeModal.classList.contains("open");
           closeModal(elements.completeModal);
           closeModal(elements.parentModal);
           closeModal(elements.authModal);
           closeModal(elements.resumeModal);
           closeModal(elements.paymentModal);
           closePaymentReminder();
+          if (completionWasOpen) clearCompletionState();
           if (paymentWasOpen && progress.paymentStatus === "PENDING") window.setTimeout(openPaymentReminder, 450);
         }
       });
@@ -4944,6 +5361,7 @@
       configureQr();
       loginOrRestoreOnLoad();
       renderStageMap();
+      restoreRouteFromLocation();
     }());
   </script>
 </body>
