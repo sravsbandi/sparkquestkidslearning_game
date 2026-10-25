@@ -1,0 +1,3581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#6c5ce7" />
+  <meta name="description" content="SparkQuest is a playful alphabet, numbers and multiplication learning game for children." />
+  <title>SparkQuest | Little Learners' Adventure</title>
+  <style>
+    :root {
+      --ink: #202442;
+      --muted: #6e7190;
+      --purple: #6c5ce7;
+      --purple-dark: #5141d0;
+      --yellow: #ffd166;
+      --coral: #ff7b8a;
+      --mint: #73e6c2;
+      --sky: #7bdff2;
+      --cream: #fffaf1;
+      --white: #ffffff;
+      --line: rgba(32, 36, 66, 0.09);
+      --shadow: 0 18px 45px rgba(55, 46, 130, 0.14);
+      --radius-lg: 30px;
+      --radius-md: 20px;
+      --radius-sm: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-width: 320px;
+      background: var(--cream);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Trebuchet MS", "Arial Rounded MT Bold", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 8% 10%, rgba(123, 223, 242, 0.42), transparent 26rem),
+        radial-gradient(circle at 92% 14%, rgba(255, 209, 102, 0.35), transparent 24rem),
+        linear-gradient(180deg, #fffdf7 0%, #f9f5ff 100%);
+      overflow-x: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    input:focus-visible {
+      outline: 4px solid rgba(123, 223, 242, 0.9);
+      outline-offset: 3px;
+    }
+
+    .app-shell {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 18px 0 44px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .topbar-left {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      color: var(--ink);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      font-size: clamp(1.05rem, 2vw, 1.35rem);
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 45px;
+      height: 45px;
+      border-radius: 15px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--purple), #9d8cff);
+      box-shadow: 0 10px 20px rgba(108, 92, 231, 0.28);
+      transform: rotate(-6deg);
+      font-size: 1.45rem;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-button,
+    .small-button {
+      min-height: 42px;
+      border-radius: 14px;
+      padding: 0 13px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid var(--line);
+      box-shadow: 0 7px 18px rgba(55, 46, 130, 0.07);
+      font-weight: 800;
+    }
+
+    .icon-button {
+      width: 44px;
+      padding: 0;
+      font-size: 1.1rem;
+    }
+
+    .account-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      max-width: 190px;
+      padding: 4px 10px 4px 5px;
+      border: 1px solid rgba(108, 92, 231, 0.16);
+      border-radius: 999px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 7px 18px rgba(55, 46, 130, 0.07);
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .account-button[hidden],
+    .account-dropdown[hidden],
+    .auth-form[hidden] {
+      display: none;
+    }
+
+    .account-avatar {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #fff0b8, #ffd166);
+      font-size: 1.25rem;
+    }
+
+    .account-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .account-dropdown {
+      position: absolute;
+      z-index: 8;
+      top: calc(100% + 10px);
+      left: 0;
+      width: min(285px, calc(100vw - 28px));
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      background: #fff;
+      box-shadow: 0 20px 45px rgba(42, 30, 120, 0.2);
+      animation: modal-in 0.2s ease both;
+    }
+
+    .account-card-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .account-card-head .account-avatar {
+      width: 43px;
+      height: 43px;
+      font-size: 1.7rem;
+    }
+
+    .account-card-name {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .account-card-subtitle {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .account-details {
+      display: grid;
+      gap: 6px;
+      margin: 12px 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+
+    .account-details strong {
+      color: var(--ink);
+    }
+
+    .logout-button {
+      width: 100%;
+      min-height: 40px;
+      border-radius: 12px;
+      color: #b33b53;
+      background: #fff0f2;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .screen {
+      display: none;
+      animation: screen-in 0.35s ease both;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes screen-in {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+      min-height: 430px;
+      padding: clamp(24px, 5vw, 58px);
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(135deg, rgba(108, 92, 231, 0.98), rgba(122, 102, 235, 0.84)),
+        #6c5ce7;
+      box-shadow: var(--shadow);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 370px;
+      height: 370px;
+      top: -165px;
+      right: -90px;
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    .hero::after {
+      width: 250px;
+      height: 250px;
+      bottom: -150px;
+      left: 28%;
+      background: rgba(115, 230, 194, 0.19);
+    }
+
+    .hero-copy,
+    .hero-visual {
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin: 0 0 12px;
+      color: var(--yellow);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    .hero h1 {
+      max-width: 620px;
+      margin-bottom: 16px;
+      color: #fff;
+      font-size: clamp(2.4rem, 6vw, 5.2rem);
+      line-height: 0.98;
+      letter-spacing: -0.065em;
+    }
+
+    .hero-text {
+      max-width: 560px;
+      margin-bottom: 25px;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: clamp(1rem, 2vw, 1.18rem);
+      line-height: 1.6;
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 11px;
+    }
+
+    .primary-button,
+    .secondary-button {
+      min-height: 50px;
+      padding: 0 20px;
+      border-radius: 16px;
+      font-weight: 900;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .primary-button:hover,
+    .secondary-button:hover,
+    .stage-button:hover,
+    .answer-option:hover {
+      transform: translateY(-3px);
+    }
+
+    .primary-button {
+      color: var(--ink);
+      background: var(--yellow);
+      box-shadow: 0 12px 22px rgba(42, 28, 119, 0.25);
+    }
+
+    .secondary-button {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .hero-visual {
+      display: grid;
+      place-items: center;
+      min-height: 290px;
+    }
+
+    .adventure-orb {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: min(310px, 70vw);
+      aspect-ratio: 1;
+      border-radius: 48% 52% 54% 46%;
+      background: linear-gradient(145deg, #fff, #efeaff);
+      box-shadow:
+        0 24px 55px rgba(37, 24, 121, 0.27),
+        inset 0 0 0 12px rgba(255, 209, 102, 0.65);
+      animation: floaty 4s ease-in-out infinite;
+    }
+
+    @keyframes floaty {
+      0%, 100% {
+        transform: translateY(0) rotate(-2deg);
+      }
+      50% {
+        transform: translateY(-10px) rotate(2deg);
+      }
+    }
+
+    .orb-face {
+      display: grid;
+      place-items: center;
+      width: 58%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: linear-gradient(150deg, #ffd166, #ffad5c);
+      box-shadow: inset -12px -14px 0 rgba(219, 122, 73, 0.14);
+      font-size: clamp(3rem, 9vw, 5.2rem);
+    }
+
+    .orb-item {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 54px;
+      height: 54px;
+      border-radius: 17px;
+      color: var(--ink);
+      background: #fff;
+      box-shadow: 0 12px 22px rgba(42, 24, 121, 0.15);
+      font-size: 1.65rem;
+    }
+
+    .orb-item.one { top: 9%; left: 14%; transform: rotate(-12deg); }
+    .orb-item.two { top: 15%; right: 10%; transform: rotate(12deg); }
+    .orb-item.three { bottom: 11%; left: 13%; transform: rotate(8deg); }
+    .orb-item.four { right: 13%; bottom: 12%; transform: rotate(-10deg); }
+
+    .welcome-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 18px;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.76);
+      box-shadow: 0 10px 25px rgba(55, 46, 130, 0.06);
+    }
+
+    .welcome-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .name-field {
+      width: min(270px, 100%);
+      min-height: 45px;
+      padding: 0 14px;
+      border: 1px solid rgba(108, 92, 231, 0.2);
+      border-radius: 13px;
+      color: var(--ink);
+      background: #fff;
+      font-weight: 700;
+    }
+
+    .feature-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .feature-card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .feature-icon {
+      display: grid;
+      place-items: center;
+      width: 45px;
+      height: 45px;
+      margin-bottom: 11px;
+      border-radius: 15px;
+      background: #f0ecff;
+      font-size: 1.35rem;
+    }
+
+    .feature-card h3 {
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .feature-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 16px 0 20px;
+    }
+
+    .section-heading h2 {
+      margin-bottom: 5px;
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      letter-spacing: -0.045em;
+    }
+
+    .section-heading p {
+      margin-bottom: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .stage-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .legend-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid var(--line);
+      font-size: 0.77rem;
+      font-weight: 800;
+    }
+
+    .stage-progress {
+      color: var(--purple-dark);
+      font-size: 0.9rem;
+      font-weight: 900;
+    }
+
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stage-button {
+      position: relative;
+      min-height: 83px;
+      padding: 9px 5px;
+      border-radius: 18px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 7px 17px rgba(55, 46, 130, 0.06);
+      transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+    }
+
+    .stage-button .stage-icon {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 1.45rem;
+    }
+
+    .stage-button .stage-number {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .stage-button .stage-stars {
+      display: block;
+      min-height: 15px;
+      margin-top: 3px;
+      color: #f4a62a;
+      font-size: 0.68rem;
+      letter-spacing: -0.1em;
+    }
+
+    .stage-button.unlocked {
+      background: linear-gradient(180deg, #fff, #f6f3ff);
+    }
+
+    .stage-button.current {
+      border-color: rgba(108, 92, 231, 0.55);
+      box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1), 0 10px 19px rgba(55, 46, 130, 0.1);
+    }
+
+    .stage-button.locked {
+      opacity: 0.46;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+    }
+
+    .stage-button.milestone {
+      background: linear-gradient(140deg, #fff5c7, #fff);
+    }
+
+    .game-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .game-top-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .back-button {
+      display: inline-grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      font-size: 1.25rem;
+    }
+
+    .stage-label {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    .stage-topic {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .hearts {
+      color: #ff6f84;
+      font-size: 1.15rem;
+      letter-spacing: -0.15em;
+      white-space: nowrap;
+    }
+
+    .question-progress-wrap {
+      height: 12px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: rgba(108, 92, 231, 0.11);
+    }
+
+    .question-progress {
+      width: 20%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--mint), var(--sky), var(--purple));
+      transition: width 0.35s ease;
+    }
+
+    .question-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .question-card,
+    .answer-card {
+      min-height: 450px;
+      padding: clamp(20px, 4vw, 36px);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .question-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      background:
+        radial-gradient(circle at 10% 12%, rgba(123, 223, 242, 0.25), transparent 11rem),
+        radial-gradient(circle at 90% 90%, rgba(255, 209, 102, 0.24), transparent 12rem),
+        #fff;
+    }
+
+    .question-kicker {
+      margin-bottom: 10px;
+      color: var(--purple);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .question-prompt {
+      margin-bottom: 20px;
+      font-size: clamp(1.25rem, 3vw, 1.8rem);
+      line-height: 1.25;
+      letter-spacing: -0.035em;
+    }
+
+    .question-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 5px;
+      min-height: 135px;
+      margin-bottom: 19px;
+      padding: 14px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #f2edff, #effbff);
+    }
+
+    .question-visual .big-letter {
+      color: var(--purple);
+      font-size: clamp(5rem, 15vw, 8rem);
+      line-height: 0.9;
+      font-weight: 900;
+      text-shadow: 5px 5px 0 rgba(108, 92, 231, 0.12);
+    }
+
+    .question-visual .picture {
+      display: grid;
+      place-items: center;
+      min-height: 100px;
+      font-size: clamp(4.5rem, 13vw, 7rem);
+      line-height: 1;
+    }
+
+    .question-visual .count-item {
+      display: inline-grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      border-radius: 13px;
+      background: #fff;
+      box-shadow: 0 5px 12px rgba(55, 46, 130, 0.08);
+      font-size: 1.65rem;
+    }
+
+    .question-visual .multiply-card {
+      display: inline-grid;
+      place-items: center;
+      min-width: 65px;
+      min-height: 65px;
+      padding: 8px 13px;
+      border-radius: 17px;
+      color: var(--ink);
+      background: #fff;
+      box-shadow: 0 8px 16px rgba(55, 46, 130, 0.1);
+      font-size: 1.45rem;
+      font-weight: 900;
+    }
+
+    .question-visual .multiply-sign {
+      color: var(--purple);
+      font-size: 1.45rem;
+      font-weight: 900;
+    }
+
+    .speak-button {
+      align-self: center;
+      min-height: 39px;
+      padding: 0 13px;
+      border-radius: 12px;
+      color: var(--purple-dark);
+      background: #f0ecff;
+      font-size: 0.83rem;
+      font-weight: 900;
+    }
+
+    .answer-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .answer-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 17px;
+    }
+
+    .answer-heading h2 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .answer-heading span {
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .answer-option {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 86px;
+      padding: 12px;
+      border-radius: 18px;
+      color: var(--ink);
+      background: #f7f5ff;
+      border: 2px solid transparent;
+      box-shadow: 0 7px 14px rgba(55, 46, 130, 0.06);
+      font-size: clamp(1.3rem, 3vw, 1.85rem);
+      font-weight: 900;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .answer-option.picture-option {
+      font-size: clamp(2.3rem, 5vw, 3.25rem);
+    }
+
+    .answer-option:disabled {
+      cursor: default;
+    }
+
+    .answer-option.correct {
+      background: #e2fff5;
+      border-color: #44d6a9;
+      animation: pop 0.35s ease;
+    }
+
+    .answer-option.wrong {
+      background: #fff0f2;
+      border-color: #ff7b8a;
+      animation: shake 0.35s ease;
+    }
+
+    @keyframes pop {
+      50% { transform: scale(1.06); }
+    }
+
+    @keyframes shake {
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-3px); }
+    }
+
+    .feedback {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 16px;
+      color: var(--ink);
+      background: #fffaf0;
+      border: 1px solid rgba(255, 209, 102, 0.5);
+      line-height: 1.4;
+    }
+
+    .feedback.show {
+      display: flex;
+    }
+
+    .feedback.good {
+      background: #eafff7;
+      border-color: rgba(68, 214, 169, 0.42);
+    }
+
+    .feedback-text {
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .next-button {
+      min-height: 42px;
+      padding: 0 14px;
+      border-radius: 13px;
+      color: #fff;
+      background: var(--purple);
+      font-size: 0.84rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .reward-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 16px;
+      color: var(--purple-dark);
+      background: rgba(240, 236, 255, 0.75);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      z-index: 10;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(32, 36, 66, 0.52);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+      animation: fade-in 0.2s ease both;
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal {
+      width: min(470px, 100%);
+      max-height: calc(100vh - 36px);
+      overflow: auto;
+      padding: 28px;
+      border-radius: 28px;
+      text-align: center;
+      background: #fff;
+      box-shadow: 0 28px 70px rgba(24, 18, 85, 0.3);
+      animation: modal-in 0.28s ease both;
+    }
+
+    .auth-modal,
+    .payment-modal {
+      width: min(610px, 100%);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 18px 0;
+      text-align: left;
+    }
+
+    .form-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .form-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-field label {
+      color: var(--ink);
+      font-size: 0.8rem;
+      font-weight: 900;
+    }
+
+    .form-field label span {
+      color: #d95068;
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      min-height: 44px;
+      padding: 0 12px;
+      border: 1px solid rgba(108, 92, 231, 0.18);
+      border-radius: 12px;
+      color: var(--ink);
+      background: #fff;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .form-help {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.73rem;
+      line-height: 1.35;
+    }
+
+    .auth-switch {
+      margin: 15px 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .text-button {
+      padding: 0;
+      color: var(--purple-dark);
+      background: transparent;
+      font-weight: 900;
+      text-decoration: underline;
+    }
+
+    .auth-form .primary-button,
+    .payment-form .primary-button {
+      width: 100%;
+      color: #fff;
+      background: var(--purple);
+    }
+
+    .payment-layout {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 18px;
+      margin: 18px 0;
+      text-align: left;
+    }
+
+    .qr-panel {
+      display: grid;
+      place-items: center;
+      min-height: 220px;
+      padding: 14px;
+      border: 1px dashed rgba(108, 92, 231, 0.28);
+      border-radius: 18px;
+      background: #faf8ff;
+    }
+
+    .qr-image {
+      display: block;
+      width: min(190px, 100%);
+      aspect-ratio: 1;
+      object-fit: contain;
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    .qr-placeholder {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1;
+      width: min(190px, 100%);
+      padding: 20px;
+      border: 2px dashed rgba(108, 92, 231, 0.28);
+      border-radius: 14px;
+      color: var(--muted);
+      background: #fff;
+      font-size: 0.76rem;
+      font-weight: 800;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    .payment-details {
+      display: grid;
+      align-content: start;
+      gap: 10px;
+    }
+
+    .price-badge {
+      display: inline-flex;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: var(--purple-dark);
+      background: #f0ecff;
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    .upi-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 11px;
+      border-radius: 12px;
+      color: var(--ink);
+      background: #f7f5ff;
+      font-size: 0.8rem;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .copy-upi {
+      flex: 0 0 auto;
+      padding: 6px 8px;
+      border-radius: 9px;
+      color: #fff;
+      background: var(--purple);
+      font-size: 0.72rem;
+      font-weight: 900;
+    }
+
+    .payment-status {
+      display: none;
+      margin: 8px 0 0;
+      padding: 11px;
+      border-radius: 12px;
+      color: var(--muted);
+      background: #fffaf0;
+      font-size: 0.78rem;
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    .payment-status.show {
+      display: block;
+    }
+
+    .payment-status.success {
+      color: #187b5e;
+      background: #eafff7;
+    }
+
+    .payment-status.error {
+      color: #a33d53;
+      background: #fff0f2;
+    }
+
+    .payment-check-button {
+      width: 100%;
+      min-height: 42px;
+      margin-top: 10px;
+      border-radius: 12px;
+      color: var(--purple-dark);
+      background: #f0ecff;
+      font-size: 0.8rem;
+      font-weight: 900;
+    }
+
+    .consent-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 10px 0;
+      color: var(--muted);
+      font-size: 0.75rem;
+      line-height: 1.4;
+      text-align: left;
+    }
+
+    .consent-row input {
+      flex: 0 0 auto;
+      width: 17px;
+      height: 17px;
+      margin-top: 1px;
+      accent-color: var(--purple);
+    }
+
+    @keyframes modal-in {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-emoji {
+      margin-bottom: 8px;
+      font-size: 4rem;
+    }
+
+    .modal h2 {
+      margin-bottom: 7px;
+      font-size: 2rem;
+      letter-spacing: -0.05em;
+    }
+
+    .modal p {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .modal-stars {
+      margin: 16px 0 20px;
+      color: #f4a62a;
+      font-size: 2.15rem;
+      letter-spacing: 0.08em;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .modal-actions button {
+      min-height: 48px;
+      border-radius: 14px;
+      font-weight: 900;
+    }
+
+    .modal-actions .primary-button {
+      background: var(--purple);
+      color: #fff;
+    }
+
+    .modal-actions .secondary-button {
+      color: var(--ink);
+      background: #f2efff;
+      border: 0;
+    }
+
+    .parent-copy {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .parent-copy strong {
+      color: var(--purple-dark);
+    }
+
+    .parent-list {
+      margin: 0 0 18px;
+      padding-left: 21px;
+      color: var(--muted);
+      text-align: left;
+      line-height: 1.65;
+    }
+
+    .danger-button {
+      width: 100%;
+      min-height: 44px;
+      border-radius: 13px;
+      color: #b33b53;
+      background: #fff0f2;
+      font-weight: 900;
+    }
+
+    .close-modal {
+      width: 100%;
+      min-height: 44px;
+      margin-top: 10px;
+      border-radius: 13px;
+      color: var(--muted);
+      background: #f6f5fa;
+      font-weight: 900;
+    }
+
+    .celebration {
+      position: fixed;
+      z-index: 11;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .confetti {
+      position: absolute;
+      top: 40%;
+      width: 11px;
+      height: 18px;
+      border-radius: 4px;
+      animation: confetti-fall 1.2s ease-out forwards;
+    }
+
+    @keyframes confetti-fall {
+      to {
+        opacity: 0;
+        transform: translate3d(var(--x), 65vh, 0) rotate(540deg);
+      }
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      .stage-grid {
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+      }
+
+      .question-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .question-card,
+      .answer-card {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .app-shell {
+        width: min(100% - 20px, 580px);
+        padding-top: 10px;
+      }
+
+      .topbar {
+        margin-bottom: 11px;
+      }
+
+      .topbar-left {
+        gap: 6px;
+      }
+
+      .account-button {
+        max-width: 130px;
+        min-height: 39px;
+        padding-right: 8px;
+        font-size: 0.74rem;
+      }
+
+      .account-avatar {
+        width: 29px;
+        height: 29px;
+        font-size: 1.1rem;
+      }
+
+      .brand-mark {
+        width: 39px;
+        height: 39px;
+        border-radius: 13px;
+      }
+
+      .brand {
+        gap: 8px;
+        font-size: 1rem;
+      }
+
+      .small-button {
+        min-height: 39px;
+        padding: 0 10px;
+        font-size: 0.76rem;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: 0;
+        padding: 27px 20px 24px;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.45rem, 14vw, 4.2rem);
+      }
+
+      .hero-text {
+        font-size: 0.98rem;
+      }
+
+      .hero-visual {
+        min-height: 230px;
+      }
+
+      .adventure-orb {
+        width: min(245px, 66vw);
+      }
+
+      .orb-item {
+        width: 43px;
+        height: 43px;
+        border-radius: 14px;
+        font-size: 1.35rem;
+      }
+
+      .welcome-card {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 15px;
+      }
+
+      .name-field {
+        width: 100%;
+      }
+
+      .feature-row {
+        grid-template-columns: 1fr;
+      }
+
+      .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .stage-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .stage-button {
+        min-height: 72px;
+        border-radius: 15px;
+      }
+
+      .stage-button .stage-icon {
+        font-size: 1.2rem;
+      }
+
+      .stage-button .stage-number {
+        font-size: 0.74rem;
+      }
+
+      .stage-button .stage-stars {
+        font-size: 0.56rem;
+      }
+
+      .question-card,
+      .answer-card {
+        padding: 20px 16px;
+        border-radius: 23px;
+      }
+
+      .question-visual .count-item {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        font-size: 1.3rem;
+      }
+
+      .answer-option {
+        min-height: 74px;
+        border-radius: 15px;
+      }
+
+      .feedback {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .next-button {
+        width: 100%;
+      }
+
+      .modal {
+        padding: 23px 17px;
+      }
+
+      .form-grid,
+      .payment-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .form-field.full {
+        grid-column: auto;
+      }
+
+      .qr-panel {
+        min-height: 180px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="brand" id="brandButton" type="button" aria-label="Go to home">
+          <span class="brand-mark">✦</span>
+          <span>SparkQuest</span>
+        </button>
+        <button class="account-button" id="accountButton" type="button" aria-expanded="false" hidden>
+          <span class="account-avatar" id="accountAvatar">🧒</span>
+          <span class="account-name" id="accountName">Account</span>
+        </button>
+        <div class="account-dropdown" id="accountDropdown" hidden>
+          <div class="account-card-head">
+            <span class="account-avatar" id="accountDropdownAvatar">🧒</span>
+            <div>
+              <p class="account-card-name" id="accountDropdownName">Explorer</p>
+              <p class="account-card-subtitle">SparkQuest account</p>
+            </div>
+          </div>
+          <div class="account-details" id="accountDetails"></div>
+          <button class="logout-button" id="logoutButton" type="button">Log out</button>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-button" id="soundButton" type="button" aria-label="Toggle sound">🔊</button>
+        <button class="small-button" id="parentButton" type="button">Parent Zone</button>
+      </div>
+    </header>
+
+    <section class="screen active" id="homeScreen" aria-labelledby="homeTitle">
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">A playful learning adventure ✨</p>
+          <h1 id="homeTitle">Play, discover, and grow!</h1>
+          <p class="hero-text">
+            Explore 100 colourful stages filled with letters, numbers, pictures, and multiplication surprises.
+            Every correct answer unlocks a new little adventure.
+          </p>
+          <div class="hero-buttons">
+            <button class="primary-button" id="playButton" type="button">Start the adventure 🚀</button>
+            <button class="secondary-button" id="continueButton" type="button">Continue playing</button>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="adventure-orb">
+            <span class="orb-item one">A</span>
+            <span class="orb-item two">🍎</span>
+            <span class="orb-item three">7</span>
+            <span class="orb-item four">×</span>
+            <span class="orb-face">🧒</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="welcome-card">
+        <div>
+          <p><strong>Who is playing today?</strong></p>
+          <p>Your name stays on this device.</p>
+        </div>
+        <label>
+          <span class="sr-only">Player name</span>
+          <input class="name-field" id="nameField" maxlength="18" placeholder="Type a name (optional)" />
+        </label>
+      </div>
+
+      <div class="feature-row">
+        <article class="feature-card">
+          <div class="feature-icon">🔤</div>
+          <h3>Letters with pictures</h3>
+          <p>Meet friendly objects and learn which letter begins each word.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">🔢</div>
+          <h3>Numbers to explore</h3>
+          <p>Count bright objects, spot number patterns, and build confidence.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">✖️</div>
+          <h3>Table Mountain</h3>
+          <p>Reach the final stages and practise multiplication in a fun way.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="screen" id="stageScreen" aria-labelledby="stageTitle">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow" style="color: var(--purple);">Choose a trail</p>
+          <h2 id="stageTitle">Your learning map</h2>
+          <p>Finish a stage to unlock the next one. Can you collect 300 stars?</p>
+        </div>
+        <button class="small-button" id="homeFromStages" type="button">Home</button>
+      </div>
+
+      <div class="stage-toolbar">
+        <div class="legend">
+          <span class="legend-pill">🔤 Letters</span>
+          <span class="legend-pill">🔢 Numbers</span>
+          <span class="legend-pill">✖️ Mixed tables</span>
+        </div>
+        <div class="stage-progress" id="stageProgress">Stage 1 unlocked</div>
+      </div>
+
+      <div class="stage-grid" id="stageGrid" aria-label="Learning stages"></div>
+    </section>
+
+    <section class="screen" id="gameScreen" aria-labelledby="gameStageLabel">
+      <div class="game-top">
+        <div class="game-top-left">
+          <button class="back-button" id="backToStages" type="button" aria-label="Back to stage map">←</button>
+          <div>
+            <p class="stage-label" id="gameStageLabel">Stage 1</p>
+            <p class="stage-topic" id="gameStageTopic">Letter Meadow</p>
+          </div>
+        </div>
+        <div class="hearts" aria-label="Five stars of energy">♥ ♥ ♥</div>
+      </div>
+
+      <div class="question-progress-wrap" aria-label="Question progress">
+        <div class="question-progress" id="questionProgress"></div>
+      </div>
+
+      <div class="question-layout">
+        <article class="question-card">
+          <p class="question-kicker" id="questionKicker">Question 1 of 5</p>
+          <h1 class="question-prompt" id="questionPrompt">Which letter starts this picture?</h1>
+          <div class="question-visual" id="questionVisual"></div>
+          <button class="speak-button" id="speakButton" type="button">🔊 Hear the question</button>
+        </article>
+
+        <article class="answer-card">
+          <div class="answer-heading">
+            <h2>Tap the best answer</h2>
+            <span id="scoreLabel">0 points</span>
+          </div>
+          <div class="answer-grid" id="answerGrid"></div>
+          <div class="feedback" id="feedback" role="status">
+            <span class="feedback-text" id="feedbackText"></span>
+            <button class="next-button" id="nextButton" type="button">Next →</button>
+          </div>
+          <div class="reward-banner">🌟 Every try helps your brain grow!</div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="completeModal" role="dialog" aria-modal="true" aria-labelledby="completeTitle">
+    <div class="modal">
+      <div class="modal-emoji" id="completeEmoji">🎉</div>
+      <h2 id="completeTitle">Stage complete!</h2>
+      <p id="completeMessage">Amazing work. You are ready for the next adventure.</p>
+      <div class="modal-stars" id="completeStars">★★★</div>
+      <div class="modal-actions">
+        <button class="primary-button" id="nextStageButton" type="button">Next stage</button>
+        <button class="secondary-button" id="mapButton" type="button">Stage map</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="parentModal" role="dialog" aria-modal="true" aria-labelledby="parentTitle">
+    <div class="modal">
+      <div class="modal-emoji">🧑‍🧑‍🧒</div>
+      <h2 id="parentTitle">Parent Zone</h2>
+      <div class="parent-copy">
+        <p><strong>Progress on this device:</strong></p>
+        <ul class="parent-list">
+          <li>Stages unlock in order.</li>
+          <li>Three stars means all five questions were answered correctly.</li>
+          <li>Progress is saved for the logged-in child account.</li>
+        </ul>
+      </div>
+      <button class="danger-button" id="resetButton" type="button">Reset all progress</button>
+      <button class="close-modal" id="closeParentButton" type="button">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal auth-modal">
+      <div class="modal-emoji" id="authEmoji">✨</div>
+      <h2 id="authTitle">Create an explorer account</h2>
+      <p id="authSubtitle">Add the child’s details to save progress and unlock the adventure.</p>
+
+      <form class="auth-form" id="signupForm">
+        <div class="form-grid">
+          <div class="form-field full">
+            <label for="signupName">Name <span>*</span></label>
+            <input class="form-input" id="signupName" name="name" type="text" maxlength="40" required autocomplete="name" />
+          </div>
+          <div class="form-field">
+            <label for="signupGender">Gender <span>*</span></label>
+            <select class="form-select" id="signupGender" name="gender" required>
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="signupAge">Age <span>*</span></label>
+            <input class="form-input" id="signupAge" name="age" type="number" min="1" max="5" step="1" required inputmode="numeric" />
+          </div>
+          <div class="form-field full">
+            <label for="signupMobile">Mobile / WhatsApp number <span>*</span></label>
+            <input class="form-input" id="signupMobile" name="mobile" type="tel" pattern="[0-9]{10}" maxlength="10" required inputmode="numeric" autocomplete="tel" />
+            <p class="form-help">Enter a 10-digit mobile number. This will be used to log in again.</p>
+          </div>
+          <div class="form-field full">
+            <label for="signupEmail">Email address</label>
+            <input class="form-input" id="signupEmail" name="email" type="email" autocomplete="email" />
+            <p class="form-help">Optional. You can leave this field blank.</p>
+          </div>
+        </div>
+        <button class="primary-button" type="submit">Sign up and start 🚀</button>
+      </form>
+
+      <form class="auth-form" id="loginForm" hidden>
+        <div class="form-grid">
+          <div class="form-field full">
+            <label for="loginName">Name <span>*</span></label>
+            <input class="form-input" id="loginName" name="name" type="text" maxlength="40" required autocomplete="name" />
+          </div>
+          <div class="form-field full">
+            <label for="loginMobile">Mobile / WhatsApp number <span>*</span></label>
+            <input class="form-input" id="loginMobile" name="mobile" type="tel" pattern="[0-9]{10}" maxlength="10" required inputmode="numeric" autocomplete="tel" />
+          </div>
+        </div>
+        <p class="form-help">Use the same name and mobile number used during signup.</p>
+        <button class="primary-button" type="submit">Log in and continue</button>
+      </form>
+
+      <p class="auth-switch" id="authSwitchSignup">Already have an account?
+        <button class="text-button" id="showLoginButton" type="button">Log in</button>
+      </p>
+      <p class="auth-switch" id="authSwitchLogin" hidden>New here?
+        <button class="text-button" id="showSignupButton" type="button">Create an account</button>
+      </p>
+      <button class="close-modal" id="closeAuthButton" type="button">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="resumeModal" role="dialog" aria-modal="true" aria-labelledby="resumeTitle">
+    <div class="modal">
+      <div class="modal-emoji">👋</div>
+      <h2 id="resumeTitle">Welcome back!</h2>
+      <p id="resumeMessage">Your learning adventure is waiting.</p>
+      <div class="modal-actions">
+        <button class="primary-button" id="resumeButton" type="button">Continue</button>
+        <button class="secondary-button" id="startFreshButton" type="button">Start over</button>
+      </div>
+      <button class="close-modal" id="closeResumeButton" type="button">Not now</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle">
+    <div class="modal payment-modal">
+      <div class="modal-emoji">🔐</div>
+      <h2 id="paymentTitle">Unlock all 100 stages</h2>
+      <p id="paymentMessage">Stage 3 is complete. Pay once to unlock the full learning adventure.</p>
+      <div class="payment-layout">
+        <div class="qr-panel">
+          <img class="qr-image" id="upiQrImage" alt="UPI payment QR code" hidden />
+          <div class="qr-placeholder" id="qrPlaceholder">Your UPI QR code will appear here.<br />Add it in the game configuration.</div>
+        </div>
+        <div class="payment-details">
+          <span class="price-badge">Subscription: ₹99</span>
+          <div class="upi-row">
+            <span id="upiIdText">UPI ID: Add your UPI ID</span>
+            <button class="copy-upi" id="copyUpiButton" type="button">Copy</button>
+          </div>
+          <p class="form-help">Scan the QR code, pay ₹99, then enter the UTR or transaction ID below. Access is unlocked only after payment verification.</p>
+          <form class="payment-form" id="paymentForm">
+            <div class="form-field">
+              <label for="utrField">UPI UTR / transaction ID <span>*</span></label>
+              <input class="form-input" id="utrField" name="utr" type="text" maxlength="80" required autocomplete="off" />
+            </div>
+            <label class="consent-row">
+              <input id="paymentConfirmation" type="checkbox" required />
+              <span>I confirm that I have paid ₹99 using the QR code or UPI ID.</span>
+            </label>
+            <button class="primary-button" id="submitPaymentButton" type="submit">Submit payment details</button>
+          </form>
+          <p class="payment-status" id="paymentStatus" role="status"></p>
+          <button class="payment-check-button" id="checkPaymentButton" type="button">Check payment status</button>
+        </div>
+      </div>
+      <button class="close-modal" id="closePaymentButton" type="button">Close for now</button>
+    </div>
+  </div>
+
+  <div class="celebration" id="celebration" aria-hidden="true"></div>
+
+  <script type="text/old-javascript">
+    (function () {
+      "use strict";
+
+      var STORAGE_KEY = "sparkquest-progress-v1";
+      var TOTAL_STAGES = 100;
+      var QUESTIONS_PER_STAGE = 5;
+      var soundOn = true;
+      var currentScreen = "homeScreen";
+      var currentStage = 1;
+      var currentQuestionIndex = 0;
+      var currentQuestions = [];
+      var currentScore = 0;
+      var currentCorrect = 0;
+      var hasAnswered = false;
+      var progress = loadProgress();
+
+      var alphabet = [
+        { letter: "A", word: "Apple", emoji: "🍎" },
+        { letter: "B", word: "Ball", emoji: "⚽" },
+        { letter: "C", word: "Cat", emoji: "🐱" },
+        { letter: "D", word: "Dog", emoji: "🐶" },
+        { letter: "E", word: "Elephant", emoji: "🐘" },
+        { letter: "F", word: "Fish", emoji: "🐟" },
+        { letter: "G", word: "Grapes", emoji: "🍇" },
+        { letter: "H", word: "Hat", emoji: "🧢" },
+        { letter: "I", word: "Ice cream", emoji: "🍦" },
+        { letter: "J", word: "Juice", emoji: "🧃" },
+        { letter: "K", word: "Kite", emoji: "🪁" },
+        { letter: "L", word: "Lion", emoji: "🦁" },
+        { letter: "M", word: "Moon", emoji: "🌙" },
+        { letter: "N", word: "Nest", emoji: "🪺" },
+        { letter: "O", word: "Orange", emoji: "🍊" },
+        { letter: "P", word: "Penguin", emoji: "🐧" },
+        { letter: "Q", word: "Queen", emoji: "👑" },
+        { letter: "R", word: "Rainbow", emoji: "🌈" },
+        { letter: "S", word: "Sun", emoji: "☀️" },
+        { letter: "T", word: "Tree", emoji: "🌳" },
+        { letter: "U", word: "Umbrella", emoji: "☂️" },
+        { letter: "V", word: "Violin", emoji: "🎻" },
+        { letter: "W", word: "Whale", emoji: "🐳" },
+        { letter: "X", word: "Xylophone", emoji: "🎼" },
+        { letter: "Y", word: "Yo-yo", emoji: "🪀" },
+        { letter: "Z", word: "Zebra", emoji: "🦓" }
+      ];
+
+      var numberPictures = ["⭐", "🍎", "🦋", "🐳", "🌈", "🚀", "🌸", "🐝", "🍭", "🎈"];
+      var celebrationColors = ["#6c5ce7", "#ff7b8a", "#ffd166", "#73e6c2", "#7bdff2"];
+
+      var elements = {
+        screens: document.querySelectorAll(".screen"),
+        playButton: document.getElementById("playButton"),
+        continueButton: document.getElementById("continueButton"),
+        nameField: document.getElementById("nameField"),
+        brandButton: document.getElementById("brandButton"),
+        homeFromStages: document.getElementById("homeFromStages"),
+        parentButton: document.getElementById("parentButton"),
+        soundButton: document.getElementById("soundButton"),
+        parentModal: document.getElementById("parentModal"),
+        closeParentButton: document.getElementById("closeParentButton"),
+        resetButton: document.getElementById("resetButton"),
+        stageGrid: document.getElementById("stageGrid"),
+        stageProgress: document.getElementById("stageProgress"),
+        backToStages: document.getElementById("backToStages"),
+        gameStageLabel: document.getElementById("gameStageLabel"),
+        gameStageTopic: document.getElementById("gameStageTopic"),
+        questionProgress: document.getElementById("questionProgress"),
+        questionKicker: document.getElementById("questionKicker"),
+        questionPrompt: document.getElementById("questionPrompt"),
+        questionVisual: document.getElementById("questionVisual"),
+        speakButton: document.getElementById("speakButton"),
+        answerGrid: document.getElementById("answerGrid"),
+        scoreLabel: document.getElementById("scoreLabel"),
+        feedback: document.getElementById("feedback"),
+        feedbackText: document.getElementById("feedbackText"),
+        nextButton: document.getElementById("nextButton"),
+        completeModal: document.getElementById("completeModal"),
+        completeEmoji: document.getElementById("completeEmoji"),
+        completeTitle: document.getElementById("completeTitle"),
+        completeMessage: document.getElementById("completeMessage"),
+        completeStars: document.getElementById("completeStars"),
+        nextStageButton: document.getElementById("nextStageButton"),
+        mapButton: document.getElementById("mapButton"),
+        celebration: document.getElementById("celebration")
+      };
+
+      function loadProgress() {
+        try {
+          var stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+          if (stored && stored.unlocked && stored.stars) {
+            return stored;
+          }
+        } catch (error) {
+          // Use fresh progress when local storage is unavailable or invalid.
+        }
+        return { unlocked: 1, stars: {}, name: "" };
+      }
+
+      function saveProgress() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        } catch (error) {
+          // The game remains playable even when storage is unavailable.
+        }
+      }
+
+      function shuffle(list) {
+        var copy = list.slice();
+        for (var i = copy.length - 1; i > 0; i -= 1) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = copy[i];
+          copy[i] = copy[j];
+          copy[j] = temp;
+        }
+        return copy;
+      }
+
+      function uniqueValues(values) {
+        return values.filter(function (value, index) {
+          return values.indexOf(value) === index;
+        });
+      }
+
+      function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function titleCaseName() {
+        var name = (progress.name || "").trim();
+        return name ? name : "little explorer";
+      }
+
+      function showScreen(screenId) {
+        currentScreen = screenId;
+        elements.screens.forEach(function (screen) {
+          screen.classList.toggle("active", screen.id === screenId);
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function getTopic(stage) {
+        if (stage <= 10) return "Letter Meadow";
+        if (stage <= 20) return "Number Park";
+        if (stage <= 30) return "Mix & Match Valley";
+        return "Multiplication Mountain";
+      }
+
+      function getStageIcon(stage) {
+        if (stage <= 10) return "🔤";
+        if (stage <= 20) return "🔢";
+        if (stage <= 30) return "🧩";
+        return "✖️";
+      }
+
+      function starsText(stars) {
+        var safeStars = Math.max(0, Math.min(3, Number(stars) || 0));
+        return "★".repeat(safeStars) + "☆".repeat(3 - safeStars);
+      }
+
+      function renderStageMap() {
+        elements.stageGrid.innerHTML = "";
+        var unlocked = Math.max(1, Math.min(TOTAL_STAGES, Number(progress.unlocked) || 1));
+        var completedCount = Object.keys(progress.stars).length;
+        elements.stageProgress.textContent = unlocked + " of " + TOTAL_STAGES + " stages unlocked • " + completedCount + " completed";
+
+        for (var stage = 1; stage <= TOTAL_STAGES; stage += 1) {
+          var button = document.createElement("button");
+          var unlockedStage = stage <= unlocked;
+          var completedStage = Object.prototype.hasOwnProperty.call(progress.stars, stage);
+          button.type = "button";
+          button.className = "stage-button" + (unlockedStage ? " unlocked" : " locked") + (stage === unlocked ? " current" : "") + (stage % 10 === 0 ? " milestone" : "");
+          button.disabled = !unlockedStage;
+          button.setAttribute("aria-label", unlockedStage ? "Play stage " + stage : "Stage " + stage + " locked");
+          button.innerHTML =
+            '<span class="stage-icon">' + (unlockedStage ? getStageIcon(stage) : "🔒") + "</span>" +
+            '<span class="stage-number">Stage ' + stage + "</span>" +
+            '<span class="stage-stars">' + (completedStage ? starsText(progress.stars[stage]) : "Not started") + "</span>";
+          if (unlockedStage) {
+            button.addEventListener("click", (function (chosenStage) {
+              return function () {
+                startStage(chosenStage);
+              };
+            }(stage)));
+          }
+          elements.stageGrid.appendChild(button);
+        }
+      }
+
+      function makeOptions(answer, values, picture) {
+        var options = uniqueValues([answer].concat(values)).slice(0, 4);
+        while (options.length < 4) {
+          var candidate = typeof answer === "number" ? randomInt(1, 20) : alphabet[randomInt(0, alphabet.length - 1)].letter;
+          if (options.indexOf(candidate) === -1) {
+            options.push(candidate);
+          }
+        }
+        return shuffle(options).map(function (value) {
+          return {
+            value: value,
+            label: value,
+            picture: picture ? value : null
+          };
+        });
+      }
+
+      function makeAlphabetQuestion(stage, index) {
+        var item = alphabet[(stage * 2 + index * 3 + randomInt(0, 5)) % alphabet.length];
+        var mode = (stage + index) % 3;
+        if (mode === 0) {
+          var wrongLetters = shuffle(alphabet.filter(function (entry) {
+            return entry.letter !== item.letter;
+          })).slice(0, 3).map(function (entry) {
+            return entry.letter;
+          });
+          return {
+            kind: "alphabet",
+            prompt: "Which letter starts this picture?",
+            visual: '<span class="picture">' + item.emoji + "</span>",
+            answer: item.letter,
+            options: makeOptions(item.letter, wrongLetters, false),
+            speech: "Which letter starts " + item.word + "?"
+          };
+        }
+        if (mode === 1) {
+          var wrongPictures = shuffle(alphabet.filter(function (entry) {
+            return entry.letter !== item.letter;
+          })).slice(0, 3);
+          var pictureOptions = shuffle([item].concat(wrongPictures)).map(function (entry) {
+            return {
+              value: entry.letter,
+              label: entry.emoji,
+              picture: true
+            };
+          });
+          return {
+            kind: "alphabet",
+            prompt: "Find the picture for the letter " + item.letter + ".",
+            visual: '<span class="big-letter">' + item.letter + "</span>",
+            answer: item.letter,
+            options: pictureOptions,
+            speech: "Find the picture for the letter " + item.letter + "."
+          };
+        }
+        var nextIndex = alphabet.indexOf(item) + 1;
+        if (nextIndex >= alphabet.length) nextIndex = 0;
+        var nextItem = alphabet[nextIndex];
+        var sequenceWrong = shuffle(alphabet.filter(function (entry) {
+          return entry.letter !== nextItem.letter;
+        })).slice(0, 3).map(function (entry) {
+          return entry.letter;
+        });
+        return {
+          kind: "alphabet",
+          prompt: "What letter comes after " + item.letter + "?",
+          visual: '<span class="big-letter">' + item.letter + " → ?</span>",
+          answer: nextItem.letter,
+          options: makeOptions(nextItem.letter, sequenceWrong, false),
+          speech: "What letter comes after " + item.letter + "?"
+        };
+      }
+
+      function makeNumberQuestion(stage, index) {
+        var number = stage <= 20 ? Math.max(1, stage - 10) : ((stage + index * 2) % 10) + 1;
+        var picture = numberPictures[(stage + index) % numberPictures.length];
+        var mode = (stage + index) % 3;
+        if (mode === 0) {
+          var countItems = "";
+          for (var i = 0; i < number; i += 1) {
+            countItems += '<span class="count-item">' + picture + "</span>";
+          }
+          return {
+            kind: "number",
+            prompt: "How many " + (number === 1 ? "things" : "things") + " can you count?",
+            visual: countItems,
+            answer: number,
+            options: makeOptions(number, [number - 2, number - 1, number + 1, number + 2].filter(function (value) {
+              return value > 0 && value <= 20;
+            }), false),
+            speech: "How many things can you count?"
+          };
+        }
+        var nextNumber = number >= 10 ? 1 : number + 1;
+        return {
+          kind: "number",
+          prompt: "What number comes after " + number + "?",
+          visual: '<span class="big-letter">' + number + " → ?</span>",
+          answer: nextNumber,
+          options: makeOptions(nextNumber, [number, number + 2, Math.max(1, number - 1)], false),
+          speech: "What number comes after " + number + "?"
+        };
+      }
+
+      function makeMultiplicationQuestion(stage, index) {
+        var maxTable = stage < 61 ? 5 : (stage < 81 ? 10 : 12);
+        var left = randomInt(2, maxTable);
+        var right = randomInt(1, 10);
+        var answer = left * right;
+        var mode = stage < 61 ? 0 : (stage + index) % 3;
+        var prompt;
+        var visual;
+        if (mode === 1) {
+          prompt = "Which number is missing? " + left + " × ? = " + answer;
+          visual = '<span class="multiply-card">' + left + "</span><span class=\"multiply-sign\">×</span><span class=\"multiply-card\">?</span><span class=\"multiply-sign\">=</span><span class=\"multiply-card\">" + answer + "</span>";
+        } else if (mode === 2) {
+          prompt = "Which number is missing? ? × " + right + " = " + answer;
+          visual = '<span class="multiply-card">?</span><span class=\"multiply-sign\">×</span><span class=\"multiply-card\">' + right + "</span><span class=\"multiply-sign\">=</span><span class=\"multiply-card\">" + answer + "</span>";
+        } else {
+          prompt = "Solve this table challenge: " + left + " × " + right + " = ?";
+          visual = '<span class="multiply-card">' + left + "</span><span class=\"multiply-sign\">×</span><span class=\"multiply-card\">" + right + "</span><span class=\"multiply-sign\">=</span><span class=\"multiply-card\">?</span>";
+        }
+        var alternatives = [answer - left, answer + left, answer - right, answer + right, left + right, left * (right + 1)].filter(function (value) {
+          return value > 0;
+        });
+        return {
+          kind: "multiplication",
+          prompt: prompt,
+          visual: visual,
+          answer: mode === 1 ? right : (mode === 2 ? left : answer),
+          options: makeOptions(mode === 1 ? right : (mode === 2 ? left : answer), alternatives, false),
+          speech: prompt
+        };
+      }
+
+      function buildQuestionTypes(stage) {
+        if (stage <= 10) {
+          return ["alphabet", "alphabet", "alphabet", "alphabet", "alphabet"];
+        }
+        if (stage <= 20) {
+          return ["number", "number", "number", "number", "number"];
+        }
+        if (stage <= 30) {
+          return shuffle(["alphabet", "alphabet", "number", "number", "number"]);
+        }
+        return shuffle(["alphabet", "number", "multiplication", "multiplication", "alphabet"]);
+      }
+
+      function generateQuestions(stage) {
+        return buildQuestionTypes(stage).map(function (kind, index) {
+          if (kind === "alphabet") return makeAlphabetQuestion(stage, index);
+          if (kind === "number") return makeNumberQuestion(stage, index);
+          return makeMultiplicationQuestion(stage, index);
+        });
+      }
+
+      function startStage(stage) {
+        if (stage > progress.unlocked) return;
+        currentStage = stage;
+        currentQuestionIndex = 0;
+        currentScore = 0;
+        currentCorrect = 0;
+        currentQuestions = generateQuestions(stage);
+        showScreen("gameScreen");
+        elements.gameStageLabel.textContent = "Stage " + stage;
+        elements.gameStageTopic.textContent = getTopic(stage);
+        renderQuestion();
+      }
+
+      function renderQuestion() {
+        var question = currentQuestions[currentQuestionIndex];
+        hasAnswered = false;
+        elements.questionKicker.textContent = "Question " + (currentQuestionIndex + 1) + " of " + QUESTIONS_PER_STAGE;
+        elements.questionPrompt.textContent = question.prompt;
+        elements.questionVisual.innerHTML = question.visual;
+        elements.questionProgress.style.width = (((currentQuestionIndex + 1) / QUESTIONS_PER_STAGE) * 100) + "%";
+        elements.scoreLabel.textContent = currentScore + " points";
+        elements.feedback.className = "feedback";
+        elements.feedbackText.textContent = "";
+        elements.nextButton.textContent = currentQuestionIndex === QUESTIONS_PER_STAGE - 1 ? "Finish stage →" : "Next →";
+        elements.answerGrid.innerHTML = "";
+
+        question.options.forEach(function (option) {
+          var button = document.createElement("button");
+          button.type = "button";
+          button.className = "answer-option" + (option.picture ? " picture-option" : "");
+          button.textContent = option.label;
+          button.setAttribute("aria-label", "Answer " + option.value);
+          button.addEventListener("click", function () {
+            chooseAnswer(option.value, button);
+          });
+          elements.answerGrid.appendChild(button);
+        });
+      }
+
+      function chooseAnswer(value, clickedButton) {
+        if (hasAnswered) return;
+        hasAnswered = true;
+        var question = currentQuestions[currentQuestionIndex];
+        var correct = String(value) === String(question.answer);
+        var answerButtons = elements.answerGrid.querySelectorAll(".answer-option");
+        answerButtons.forEach(function (button) {
+          button.disabled = true;
+          if (button.getAttribute("aria-label") === "Answer " + question.answer) {
+            button.classList.add("correct");
+          }
+        });
+        if (correct) {
+          currentCorrect += 1;
+          currentScore += 100;
+          clickedButton.classList.add("correct");
+          elements.feedback.classList.add("show", "good");
+          elements.feedbackText.textContent = "Brilliant! Your brain is shining. 🌟";
+          playTone(true);
+          createConfetti();
+        } else {
+          clickedButton.classList.add("wrong");
+          elements.feedback.classList.add("show");
+          elements.feedbackText.textContent = "Nice try! The answer is " + question.answer + ". Keep going! 💛";
+          playTone(false);
+        }
+        elements.scoreLabel.textContent = currentScore + " points";
+      }
+
+      function finishStage() {
+        var stars = currentCorrect >= 5 ? 3 : (currentCorrect >= 3 ? 2 : 1);
+        var previousStars = Number(progress.stars[currentStage]) || 0;
+        progress.stars[currentStage] = Math.max(previousStars, stars);
+        if (currentStage < TOTAL_STAGES) {
+          progress.unlocked = Math.max(Number(progress.unlocked) || 1, currentStage + 1);
+        }
+        saveProgress();
+        elements.completeEmoji.textContent = stars === 3 ? "🏆" : (stars === 2 ? "🌟" : "💪");
+        elements.completeTitle.textContent = stars === 3 ? "Superstar work!" : "Stage complete!";
+        elements.completeMessage.textContent =
+          "Well done, " + titleCaseName() + "! You got " + currentCorrect + " out of " + QUESTIONS_PER_STAGE + " right and earned " + currentScore + " points.";
+        elements.completeStars.textContent = starsText(stars);
+        elements.nextStageButton.textContent = currentStage >= TOTAL_STAGES ? "Play again" : "Next stage";
+        elements.completeModal.classList.add("open");
+        playTone(true);
+      }
+
+      function nextQuestion() {
+        if (!hasAnswered) return;
+        if (currentQuestionIndex >= QUESTIONS_PER_STAGE - 1) {
+          finishStage();
+          return;
+        }
+        currentQuestionIndex += 1;
+        renderQuestion();
+      }
+
+      function speakCurrentQuestion() {
+        if (!("speechSynthesis" in window)) return;
+        var question = currentQuestions[currentQuestionIndex];
+        window.speechSynthesis.cancel();
+        var utterance = new SpeechSynthesisUtterance(question.speech);
+        utterance.rate = 0.84;
+        utterance.pitch = 1.2;
+        window.speechSynthesis.speak(utterance);
+      }
+
+      function playTone(success) {
+        if (!soundOn || !window.AudioContext && !window.webkitAudioContext) return;
+        try {
+          var AudioCtor = window.AudioContext || window.webkitAudioContext;
+          var audioContext = new AudioCtor();
+          var oscillator = audioContext.createOscillator();
+          var gain = audioContext.createGain();
+          oscillator.type = "sine";
+          oscillator.frequency.value = success ? 660 : 220;
+          gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.08, audioContext.currentTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + (success ? 0.22 : 0.16));
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+          oscillator.start();
+          oscillator.stop(audioContext.currentTime + (success ? 0.25 : 0.19));
+        } catch (error) {
+          // Sound is optional and should never block play.
+        }
+      }
+
+      function createConfetti() {
+        for (var i = 0; i < 14; i += 1) {
+          var piece = document.createElement("span");
+          piece.className = "confetti";
+          piece.style.left = randomInt(8, 92) + "%";
+          piece.style.background = celebrationColors[i % celebrationColors.length];
+          piece.style.setProperty("--x", randomInt(-150, 150) + "px");
+          piece.style.animationDelay = (i * 0.018) + "s";
+          elements.celebration.appendChild(piece);
+          window.setTimeout(function () {
+            if (elements.celebration.firstChild) {
+              elements.celebration.removeChild(elements.celebration.firstChild);
+            }
+          }, 1450);
+        }
+      }
+
+      function closeModal(modal) {
+        modal.classList.remove("open");
+      }
+
+      elements.playButton.addEventListener("click", function () {
+        progress.name = elements.nameField.value.trim().slice(0, 18);
+        saveProgress();
+        renderStageMap();
+        showScreen("stageScreen");
+      });
+
+      elements.continueButton.addEventListener("click", function () {
+        progress.name = elements.nameField.value.trim().slice(0, 18);
+        saveProgress();
+        renderStageMap();
+        showScreen("stageScreen");
+      });
+
+      elements.nameField.value = progress.name || "";
+      elements.brandButton.addEventListener("click", function () {
+        closeModal(elements.completeModal);
+        closeModal(elements.parentModal);
+        showScreen("homeScreen");
+      });
+
+      elements.homeFromStages.addEventListener("click", function () {
+        showScreen("homeScreen");
+      });
+
+      elements.backToStages.addEventListener("click", function () {
+        renderStageMap();
+        showScreen("stageScreen");
+      });
+
+      elements.parentButton.addEventListener("click", function () {
+        elements.parentModal.classList.add("open");
+      });
+
+      elements.closeParentButton.addEventListener("click", function () {
+        closeModal(elements.parentModal);
+      });
+
+      elements.parentModal.addEventListener("click", function (event) {
+        if (event.target === elements.parentModal) closeModal(elements.parentModal);
+      });
+
+      elements.resetButton.addEventListener("click", function () {
+        var confirmed = window.confirm("Reset all stages and stars on this device?");
+        if (!confirmed) return;
+        progress = { unlocked: 1, stars: {}, name: "" };
+        saveProgress();
+        elements.nameField.value = "";
+        closeModal(elements.parentModal);
+        renderStageMap();
+        showScreen("homeScreen");
+      });
+
+      elements.soundButton.addEventListener("click", function () {
+        soundOn = !soundOn;
+        elements.soundButton.textContent = soundOn ? "🔊" : "🔇";
+        elements.soundButton.setAttribute("aria-label", soundOn ? "Turn sound off" : "Turn sound on");
+      });
+
+      elements.speakButton.addEventListener("click", speakCurrentQuestion);
+      elements.nextButton.addEventListener("click", nextQuestion);
+
+      elements.completeModal.addEventListener("click", function (event) {
+        if (event.target === elements.completeModal) closeModal(elements.completeModal);
+      });
+
+      elements.nextStageButton.addEventListener("click", function () {
+        closeModal(elements.completeModal);
+        if (currentStage >= TOTAL_STAGES) {
+          currentStage = 1;
+          currentQuestionIndex = 0;
+          currentQuestions = generateQuestions(currentStage);
+          showScreen("gameScreen");
+          renderQuestion();
+          return;
+        }
+        startStage(currentStage + 1);
+      });
+
+      elements.mapButton.addEventListener("click", function () {
+        closeModal(elements.completeModal);
+        renderStageMap();
+        showScreen("stageScreen");
+      });
+
+      window.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          closeModal(elements.completeModal);
+          closeModal(elements.parentModal);
+        }
+      });
+
+      renderStageMap();
+    }());
+  </script>
+
+  <iframe name="sparkQuestSink" id="sparkQuestSink" title="Background data submission" hidden></iframe>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /*
+       * Production configuration
+       * 1. Deploy the Apps Script supplied with this project as a Web app.
+       * 2. Paste its /exec URL into appsScriptUrl.
+       * 3. Add your QR image at assets/upi-qr.png or change upiQrImage.
+       * 4. Replace upiId with the UPI ID that receives the subscription.
+       */
+      var CONFIG = {
+        appsScriptUrl: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE",
+        upiId: "Scan the QR code",
+        upiQrImage: "assets/upi-qr.jpeg",
+        subscriptionAmount: 99
+      };
+
+      var STORAGE_KEY = "sparkquest-accounts-v2";
+      var TOTAL_STAGES = 100;
+      var QUESTIONS_PER_STAGE = 5;
+      var soundOn = true;
+      var currentStage = 1;
+      var currentQuestionIndex = 0;
+      var currentQuestions = [];
+      var currentScore = 0;
+      var currentCorrect = 0;
+      var hasAnswered = false;
+      var appState = loadAppState();
+      var activeUser = null;
+      var progress = emptyProgress();
+
+      var alphabet = [
+        { letter: "A", word: "Apple", emoji: "🍎" },
+        { letter: "B", word: "Ball", emoji: "⚽" },
+        { letter: "C", word: "Cat", emoji: "🐱" },
+        { letter: "D", word: "Dog", emoji: "🐶" },
+        { letter: "E", word: "Elephant", emoji: "🐘" },
+        { letter: "F", word: "Fish", emoji: "🐟" },
+        { letter: "G", word: "Grapes", emoji: "🍇" },
+        { letter: "H", word: "Hat", emoji: "🧢" },
+        { letter: "I", word: "Ice cream", emoji: "🍦" },
+        { letter: "J", word: "Juice", emoji: "🧃" },
+        { letter: "K", word: "Kite", emoji: "🪁" },
+        { letter: "L", word: "Lion", emoji: "🦁" },
+        { letter: "M", word: "Moon", emoji: "🌙" },
+        { letter: "N", word: "Nest", emoji: "🪺" },
+        { letter: "O", word: "Orange", emoji: "🍊" },
+        { letter: "P", word: "Penguin", emoji: "🐧" },
+        { letter: "Q", word: "Queen", emoji: "👑" },
+        { letter: "R", word: "Rainbow", emoji: "🌈" },
+        { letter: "S", word: "Sun", emoji: "☀️" },
+        { letter: "T", word: "Tree", emoji: "🌳" },
+        { letter: "U", word: "Umbrella", emoji: "☂️" },
+        { letter: "V", word: "Violin", emoji: "🎻" },
+        { letter: "W", word: "Whale", emoji: "🐳" },
+        { letter: "X", word: "Xylophone", emoji: "🎼" },
+        { letter: "Y", word: "Yo-yo", emoji: "🪀" },
+        { letter: "Z", word: "Zebra", emoji: "🦓" }
+      ];
+
+      var numberPictures = ["⭐", "🍎", "🦋", "🐳", "🌈", "🚀", "🌸", "🐝", "🍭", "🎈"];
+      var celebrationColors = ["#6c5ce7", "#ff7b8a", "#ffd166", "#73e6c2", "#7bdff2"];
+
+      var elements = {
+        screens: document.querySelectorAll(".screen"),
+        playButton: document.getElementById("playButton"),
+        continueButton: document.getElementById("continueButton"),
+        nameField: document.getElementById("nameField"),
+        brandButton: document.getElementById("brandButton"),
+        homeFromStages: document.getElementById("homeFromStages"),
+        parentButton: document.getElementById("parentButton"),
+        soundButton: document.getElementById("soundButton"),
+        parentModal: document.getElementById("parentModal"),
+        closeParentButton: document.getElementById("closeParentButton"),
+        resetButton: document.getElementById("resetButton"),
+        accountButton: document.getElementById("accountButton"),
+        accountAvatar: document.getElementById("accountAvatar"),
+        accountName: document.getElementById("accountName"),
+        accountDropdown: document.getElementById("accountDropdown"),
+        accountDropdownAvatar: document.getElementById("accountDropdownAvatar"),
+        accountDropdownName: document.getElementById("accountDropdownName"),
+        accountDetails: document.getElementById("accountDetails"),
+        logoutButton: document.getElementById("logoutButton"),
+        authModal: document.getElementById("authModal"),
+        authTitle: document.getElementById("authTitle"),
+        authSubtitle: document.getElementById("authSubtitle"),
+        signupForm: document.getElementById("signupForm"),
+        loginForm: document.getElementById("loginForm"),
+        signupName: document.getElementById("signupName"),
+        signupGender: document.getElementById("signupGender"),
+        signupAge: document.getElementById("signupAge"),
+        signupMobile: document.getElementById("signupMobile"),
+        signupEmail: document.getElementById("signupEmail"),
+        loginName: document.getElementById("loginName"),
+        loginMobile: document.getElementById("loginMobile"),
+        showLoginButton: document.getElementById("showLoginButton"),
+        showSignupButton: document.getElementById("showSignupButton"),
+        authSwitchSignup: document.getElementById("authSwitchSignup"),
+        authSwitchLogin: document.getElementById("authSwitchLogin"),
+        closeAuthButton: document.getElementById("closeAuthButton"),
+        resumeModal: document.getElementById("resumeModal"),
+        resumeTitle: document.getElementById("resumeTitle"),
+        resumeMessage: document.getElementById("resumeMessage"),
+        resumeButton: document.getElementById("resumeButton"),
+        startFreshButton: document.getElementById("startFreshButton"),
+        closeResumeButton: document.getElementById("closeResumeButton"),
+        paymentModal: document.getElementById("paymentModal"),
+        paymentMessage: document.getElementById("paymentMessage"),
+        upiQrImage: document.getElementById("upiQrImage"),
+        qrPlaceholder: document.getElementById("qrPlaceholder"),
+        upiIdText: document.getElementById("upiIdText"),
+        copyUpiButton: document.getElementById("copyUpiButton"),
+        paymentForm: document.getElementById("paymentForm"),
+        utrField: document.getElementById("utrField"),
+        paymentConfirmation: document.getElementById("paymentConfirmation"),
+        paymentStatus: document.getElementById("paymentStatus"),
+        checkPaymentButton: document.getElementById("checkPaymentButton"),
+        closePaymentButton: document.getElementById("closePaymentButton"),
+        stageGrid: document.getElementById("stageGrid"),
+        stageProgress: document.getElementById("stageProgress"),
+        backToStages: document.getElementById("backToStages"),
+        gameStageLabel: document.getElementById("gameStageLabel"),
+        gameStageTopic: document.getElementById("gameStageTopic"),
+        questionProgress: document.getElementById("questionProgress"),
+        questionKicker: document.getElementById("questionKicker"),
+        questionPrompt: document.getElementById("questionPrompt"),
+        questionVisual: document.getElementById("questionVisual"),
+        speakButton: document.getElementById("speakButton"),
+        answerGrid: document.getElementById("answerGrid"),
+        scoreLabel: document.getElementById("scoreLabel"),
+        feedback: document.getElementById("feedback"),
+        feedbackText: document.getElementById("feedbackText"),
+        nextButton: document.getElementById("nextButton"),
+        completeModal: document.getElementById("completeModal"),
+        completeEmoji: document.getElementById("completeEmoji"),
+        completeTitle: document.getElementById("completeTitle"),
+        completeMessage: document.getElementById("completeMessage"),
+        completeStars: document.getElementById("completeStars"),
+        nextStageButton: document.getElementById("nextStageButton"),
+        mapButton: document.getElementById("mapButton"),
+        celebration: document.getElementById("celebration")
+      };
+
+      function emptyProgress() {
+        return {
+          unlocked: 1,
+          stars: {},
+          paid: false,
+          paymentStatus: "NOT_SUBMITTED",
+          paymentId: "",
+          paymentUtr: ""
+        };
+      }
+
+      function normalizeProgress(value) {
+        var base = emptyProgress();
+        var incoming = value && typeof value === "object" ? value : {};
+        base.unlocked = Math.max(1, Math.min(TOTAL_STAGES, Number(incoming.unlocked) || 1));
+        base.stars = incoming.stars && typeof incoming.stars === "object" ? incoming.stars : {};
+        base.paid = Boolean(incoming.paid);
+        base.paymentStatus = String(incoming.paymentStatus || "NOT_SUBMITTED").toUpperCase();
+        base.paymentId = String(incoming.paymentId || "");
+        base.paymentUtr = String(incoming.paymentUtr || "");
+        if (base.paid) {
+          base.unlocked = TOTAL_STAGES;
+          base.paymentStatus = "PAID";
+        }
+        return base;
+      }
+
+      function loadAppState() {
+        try {
+          var stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+          if (stored && stored.accounts) {
+            return {
+              accounts: stored.accounts,
+              activeUserId: stored.activeUserId || null
+            };
+          }
+        } catch (error) {
+          // Start with a clean local state if storage is unavailable.
+        }
+        return { accounts: {}, activeUserId: null };
+      }
+
+      function saveAppState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        } catch (error) {
+          // The game remains playable if browser storage is blocked.
+        }
+      }
+
+      function persistLocalUser() {
+        if (!activeUser) return;
+        activeUser.progress = normalizeProgress(progress);
+        activeUser.updatedAt = new Date().toISOString();
+        appState.accounts[activeUser.userId] = activeUser;
+        saveAppState();
+      }
+
+      function normalizeMobile(value) {
+        return String(value || "").replace(/\D/g, "").slice(-10);
+      }
+
+      function normalizeName(value) {
+        return String(value || "").trim().replace(/\s+/g, " ").toLowerCase();
+      }
+
+      function makeId(prefix) {
+        return prefix + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 9);
+      }
+
+      function avatarForGender(gender) {
+        var value = String(gender || "").toLowerCase();
+        if (value === "female") return "👧";
+        if (value === "male") return "👦";
+        return "🧒";
+      }
+
+      function titleCaseName() {
+        return activeUser && activeUser.name ? activeUser.name : "little explorer";
+      }
+
+      function hasSavedProgress(value) {
+        var saved = value || progress;
+        return Number(saved.unlocked) > 1 ||
+          Object.keys(saved.stars || {}).length > 0 ||
+          Boolean(saved.paid) ||
+          String(saved.paymentStatus || "") === "PENDING";
+      }
+
+      function isConfigured() {
+        return CONFIG.appsScriptUrl && CONFIG.appsScriptUrl.indexOf("PASTE_") !== 0;
+      }
+
+      function showScreen(screenId) {
+        elements.screens.forEach(function (screen) {
+          screen.classList.toggle("active", screen.id === screenId);
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function closeModal(modal) {
+        if (modal) modal.classList.remove("open");
+      }
+
+      function openModal(modal) {
+        if (modal) modal.classList.add("open");
+      }
+
+      function updateAccountUI() {
+        var loggedIn = Boolean(activeUser);
+        elements.accountButton.hidden = !loggedIn;
+        if (!loggedIn) {
+          elements.accountDropdown.hidden = true;
+          elements.accountButton.setAttribute("aria-expanded", "false");
+          return;
+        }
+        var avatar = avatarForGender(activeUser.gender);
+        elements.accountAvatar.textContent = avatar;
+        elements.accountDropdownAvatar.textContent = avatar;
+        elements.accountName.textContent = activeUser.name;
+        elements.accountDropdownName.textContent = activeUser.name;
+        elements.accountDetails.innerHTML =
+          "<div><strong>Gender:</strong> " + escapeHtml(activeUser.gender) + "</div>" +
+          "<div><strong>Age:</strong> " + escapeHtml(activeUser.age) + "</div>" +
+          "<div><strong>Mobile:</strong> " + escapeHtml(activeUser.mobile) + "</div>" +
+          "<div><strong>Email:</strong> " + escapeHtml(activeUser.email || "Not provided") + "</div>" +
+          "<div><strong>Progress:</strong> " + (progress.paid ? "All stages unlocked" : "Stage " + progress.unlocked + " unlocked") + "</div>";
+      }
+
+      function escapeHtml(value) {
+        return String(value || "").replace(/[&<>"']/g, function (character) {
+          return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+          }[character];
+        });
+      }
+
+      function setActiveUser(user, keepLoggedIn) {
+        activeUser = user;
+        progress = normalizeProgress(user.progress);
+        user.progress = progress;
+        appState.accounts[user.userId] = user;
+        appState.activeUserId = keepLoggedIn ? user.userId : null;
+        saveAppState();
+        updateAccountUI();
+      }
+
+      function openAuth(mode) {
+        var loginMode = mode === "login";
+        elements.authTitle.textContent = loginMode ? "Welcome back" : "Create an explorer account";
+        elements.authSubtitle.textContent = loginMode
+          ? "Use the same name and mobile number to find the saved adventure."
+          : "Add the child’s details to save progress and unlock the adventure.";
+        elements.signupForm.hidden = loginMode;
+        elements.loginForm.hidden = !loginMode;
+        elements.authSwitchSignup.hidden = loginMode;
+        elements.authSwitchLogin.hidden = !loginMode;
+        openModal(elements.authModal);
+        setTimeout(function () {
+          (loginMode ? elements.loginName : elements.signupName).focus();
+        }, 80);
+      }
+
+      function sendToSheet(payload) {
+        if (!isConfigured()) return;
+        var form = document.createElement("form");
+        form.method = "POST";
+        form.action = CONFIG.appsScriptUrl;
+        form.target = "sparkQuestSink";
+        form.style.display = "none";
+        Object.keys(payload).forEach(function (key) {
+          var field = document.createElement("input");
+          field.type = "hidden";
+          field.name = key;
+          field.value = payload[key] === undefined || payload[key] === null ? "" : String(payload[key]);
+          form.appendChild(field);
+        });
+        document.body.appendChild(form);
+        form.submit();
+        window.setTimeout(function () {
+          form.remove();
+        }, 1500);
+      }
+
+      function requestJsonp(params, callback) {
+        if (!isConfigured()) {
+          callback({ ok: false, configured: false, message: "Apps Script URL is not configured." });
+          return;
+        }
+        var callbackName = "sparkQuestCallback_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+        var script = document.createElement("script");
+        var query = [];
+        var finished = false;
+        Object.keys(params).forEach(function (key) {
+          query.push(encodeURIComponent(key) + "=" + encodeURIComponent(params[key] === undefined ? "" : params[key]));
+        });
+        query.push("callback=" + encodeURIComponent(callbackName));
+        window[callbackName] = function (data) {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          callback(data || {});
+        };
+        function cleanup() {
+          delete window[callbackName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+        script.onerror = function () {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          callback({ ok: false, message: "Could not connect to the payment or account service." });
+        };
+        script.src = CONFIG.appsScriptUrl + (CONFIG.appsScriptUrl.indexOf("?") >= 0 ? "&" : "?") + query.join("&");
+        document.body.appendChild(script);
+        window.setTimeout(function () {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          callback({ ok: false, message: "The service took too long to respond." });
+        }, 10000);
+      }
+
+      function mergeRemoteUser(remote, fallbackUser) {
+        var remoteProgress = normalizeProgress(remote.progress);
+        if (remote.paid || String(remote.paymentStatus || "").toUpperCase() === "PAID") {
+          remoteProgress.paid = true;
+          remoteProgress.unlocked = TOTAL_STAGES;
+          remoteProgress.paymentStatus = "PAID";
+        }
+        return {
+          userId: remote.userId || fallbackUser.userId,
+          name: remote.name || fallbackUser.name,
+          gender: remote.gender || fallbackUser.gender,
+          age: remote.age || fallbackUser.age,
+          mobile: remote.mobile || fallbackUser.mobile,
+          email: remote.email || fallbackUser.email || "",
+          progress: remote.progress ? remoteProgress : fallbackUser.progress
+        };
+      }
+
+      function finishLogin(user) {
+        setActiveUser(user, true);
+        closeModal(elements.authModal);
+        elements.accountDropdown.hidden = true;
+        if (hasSavedProgress(progress)) {
+          showResumeModal();
+        } else {
+          renderStageMap();
+          showScreen("stageScreen");
+        }
+      }
+
+      function findLocalUser(name, mobile) {
+        var normalized = normalizeName(name);
+        var normalizedMobile = normalizeMobile(mobile);
+        var ids = Object.keys(appState.accounts);
+        for (var i = 0; i < ids.length; i += 1) {
+          var user = appState.accounts[ids[i]];
+          if (normalizeName(user.name) === normalized && normalizeMobile(user.mobile) === normalizedMobile) {
+            return user;
+          }
+        }
+        return null;
+      }
+
+      function loginWithDetails(name, mobile) {
+        var localUser = findLocalUser(name, mobile);
+        if (!isConfigured()) {
+          if (localUser) {
+            finishLogin(localUser);
+          } else {
+            window.alert("No account was found on this device. Please check the name and mobile number.");
+          }
+          return;
+        }
+        elements.authSubtitle.textContent = "Checking your saved progress…";
+        requestJsonp({ action: "login", name: name, mobile: normalizeMobile(mobile) }, function (response) {
+          if (response && response.found) {
+            finishLogin(mergeRemoteUser(response, localUser || {
+              userId: response.userId || makeId("user"),
+              name: name,
+              mobile: normalizeMobile(mobile),
+              gender: response.gender || "Other",
+              age: response.age || "",
+              email: response.email || "",
+              progress: emptyProgress()
+            }));
+            return;
+          }
+          if (localUser) {
+            finishLogin(localUser);
+            return;
+          }
+          elements.authSubtitle.textContent = "We could not find those details. Please check the name and mobile number.";
+        });
+      }
+
+      function signUp() {
+        var name = elements.signupName.value.trim();
+        var gender = elements.signupGender.value;
+        var age = Number(elements.signupAge.value);
+        var mobile = normalizeMobile(elements.signupMobile.value);
+        var email = elements.signupEmail.value.trim();
+        if (!name || !gender || !age || age < 1 || age > 5 || mobile.length !== 10) {
+          window.alert("Please complete the required fields. Age must be between 1 and 5, and the mobile number must contain 10 digits.");
+          return;
+        }
+        var existing = findLocalUser(name, mobile);
+        if (existing) {
+          openAuth("login");
+          elements.loginName.value = name;
+          elements.loginMobile.value = mobile;
+          elements.authSubtitle.textContent = "This account already exists. Log in to continue.";
+          return;
+        }
+        var user = {
+          userId: makeId("user"),
+          name: name,
+          gender: gender,
+          age: age,
+          mobile: mobile,
+          email: email,
+          progress: emptyProgress(),
+          createdAt: new Date().toISOString()
+        };
+        setActiveUser(user, true);
+        sendToSheet({
+          action: "signup",
+          userId: user.userId,
+          name: user.name,
+          gender: user.gender,
+          age: user.age,
+          mobile: user.mobile,
+          email: user.email,
+          unlockedStage: 1,
+          progressData: JSON.stringify(progress)
+        });
+        closeModal(elements.authModal);
+        renderStageMap();
+        showScreen("stageScreen");
+      }
+
+      function showResumeModal() {
+        elements.resumeTitle.textContent = "Welcome back, " + titleCaseName() + "!";
+        elements.resumeMessage.textContent = progress.paid
+          ? "Your saved progress is ready. All 100 stages are unlocked."
+          : "You reached Stage " + progress.unlocked + ". Would you like to continue or start over?";
+        openModal(elements.resumeModal);
+      }
+
+      function resetCurrentProgress() {
+        var paid = progress.paid;
+        var paymentStatus = progress.paymentStatus;
+        var paymentId = progress.paymentId;
+        var paymentUtr = progress.paymentUtr;
+        progress = emptyProgress();
+        progress.paid = paid;
+        progress.paymentStatus = paymentStatus;
+        progress.paymentId = paymentId;
+        progress.paymentUtr = paymentUtr;
+        if (paid) progress.unlocked = TOTAL_STAGES;
+        persistLocalUser();
+        sendProgressToSheet();
+        updateAccountUI();
+      }
+
+      function sendProgressToSheet() {
+        if (!activeUser) return;
+        sendToSheet({
+          action: "progress",
+          userId: activeUser.userId,
+          name: activeUser.name,
+          gender: activeUser.gender,
+          age: activeUser.age,
+          mobile: activeUser.mobile,
+          email: activeUser.email || "",
+          currentStage: currentStage,
+          unlockedStage: progress.unlocked,
+          starsJson: JSON.stringify(progress.stars),
+          paymentStatus: progress.paymentStatus,
+          progressData: JSON.stringify(progress)
+        });
+      }
+
+      function renderStageMap() {
+        elements.stageGrid.innerHTML = "";
+        var unlocked = progress.paid ? TOTAL_STAGES : Math.min(3, Math.max(1, progress.unlocked));
+        var completedCount = Object.keys(progress.stars || {}).length;
+        elements.stageProgress.textContent = progress.paid
+          ? "All 100 stages unlocked • " + completedCount + " completed"
+          : "Stage " + unlocked + " unlocked • Complete Stage 3 to subscribe";
+
+        for (var stage = 1; stage <= TOTAL_STAGES; stage += 1) {
+          var button = document.createElement("button");
+          var available = progress.paid ? stage <= TOTAL_STAGES : stage <= unlocked;
+          var completed = Object.prototype.hasOwnProperty.call(progress.stars || {}, stage);
+          button.type = "button";
+          button.className = "stage-button" + (available ? " unlocked" : " locked") + (stage === unlocked ? " current" : "") + (stage % 10 === 0 ? " milestone" : "");
+          button.disabled = !available;
+          button.setAttribute("aria-label", available ? "Play stage " + stage : "Stage " + stage + " locked");
+          button.innerHTML =
+            '<span class="stage-icon">' + (available ? getStageIcon(stage) : "🔒") + "</span>" +
+            '<span class="stage-number">Stage ' + stage + "</span>" +
+            '<span class="stage-stars">' + (completed ? starsText(progress.stars[stage]) : "Not started") + "</span>";
+          if (available) {
+            button.addEventListener("click", (function (chosenStage) {
+              return function () {
+                startStage(chosenStage);
+              };
+            }(stage)));
+          }
+          elements.stageGrid.appendChild(button);
+        }
+      }
+
+      function getTopic(stage) {
+        if (stage <= 10) return "Letter Meadow";
+        if (stage <= 20) return "Number Park";
+        if (stage <= 30) return "Mix & Match Valley";
+        return "Multiplication Mountain";
+      }
+
+      function getStageIcon(stage) {
+        if (stage <= 10) return "🔤";
+        if (stage <= 20) return "🔢";
+        if (stage <= 30) return "🧩";
+        return "✖️";
+      }
+
+      function starsText(stars) {
+        var safeStars = Math.max(0, Math.min(3, Number(stars) || 0));
+        return "★".repeat(safeStars) + "☆".repeat(3 - safeStars);
+      }
+
+      function shuffle(list) {
+        var copy = list.slice();
+        for (var i = copy.length - 1; i > 0; i -= 1) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = copy[i];
+          copy[i] = copy[j];
+          copy[j] = temp;
+        }
+        return copy;
+      }
+
+      function uniqueValues(values) {
+        return values.filter(function (value, index) {
+          return values.indexOf(value) === index;
+        });
+      }
+
+      function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function makeOptions(answer, values) {
+        var options = uniqueValues([answer].concat(values)).filter(function (value) {
+          return value !== undefined && value !== null && value !== "";
+        }).slice(0, 4);
+        while (options.length < 4) {
+          var candidate = typeof answer === "number"
+            ? randomInt(1, Math.max(12, Number(answer) + 5))
+            : alphabet[randomInt(0, alphabet.length - 1)].letter;
+          if (options.indexOf(candidate) === -1) options.push(candidate);
+        }
+        return shuffle(options).map(function (value) {
+          return { value: value, label: value };
+        });
+      }
+
+      function makeAlphabetQuestion(stage, index) {
+        var item = alphabet[(stage * 2 + index * 3 + randomInt(0, 5)) % alphabet.length];
+        var mode = (stage + index) % 3;
+        if (mode === 0) {
+          var wrongLetters = shuffle(alphabet.filter(function (entry) {
+            return entry.letter !== item.letter;
+          })).slice(0, 3).map(function (entry) {
+            return entry.letter;
+          });
+          return {
+            kind: "alphabet",
+            prompt: "Which letter starts this picture?",
+            visual: '<span class="picture">' + item.emoji + "</span>",
+            answer: item.letter,
+            options: makeOptions(item.letter, wrongLetters),
+            speech: "Which letter starts " + item.word + "?"
+          };
+        }
+        if (mode === 1) {
+          var wrongPictures = shuffle(alphabet.filter(function (entry) {
+            return entry.letter !== item.letter;
+          })).slice(0, 3);
+          return {
+            kind: "alphabet",
+            prompt: "Find the picture for the letter " + item.letter + ".",
+            visual: '<span class="big-letter">' + item.letter + "</span>",
+            answer: item.letter,
+            options: shuffle([item].concat(wrongPictures)).map(function (entry) {
+              return { value: entry.letter, label: entry.emoji, picture: true };
+            }),
+            speech: "Find the picture for the letter " + item.letter + "."
+          };
+        }
+        var nextIndex = alphabet.indexOf(item) + 1;
+        if (nextIndex >= alphabet.length) nextIndex = 0;
+        var nextItem = alphabet[nextIndex];
+        var sequenceWrong = shuffle(alphabet.filter(function (entry) {
+          return entry.letter !== nextItem.letter;
+        })).slice(0, 3).map(function (entry) {
+          return entry.letter;
+        });
+        return {
+          kind: "alphabet",
+          prompt: "What letter comes after " + item.letter + "?",
+          visual: '<span class="big-letter">' + item.letter + " → ?</span>",
+          answer: nextItem.letter,
+          options: makeOptions(nextItem.letter, sequenceWrong),
+          speech: "What letter comes after " + item.letter + "?"
+        };
+      }
+
+      function makeNumberQuestion(stage, index) {
+        var number = stage <= 20 ? Math.max(1, stage - 10) : ((stage + index * 2) % 10) + 1;
+        var picture = numberPictures[(stage + index) % numberPictures.length];
+        var mode = (stage + index) % 3;
+        if (mode === 0) {
+          var countItems = "";
+          for (var i = 0; i < number; i += 1) {
+            countItems += '<span class="count-item">' + picture + "</span>";
+          }
+          return {
+            kind: "number",
+            prompt: "How many objects can you count?",
+            visual: countItems,
+            answer: number,
+            options: makeOptions(number, [number - 2, number - 1, number + 1, number + 2].filter(function (value) {
+              return value > 0 && value <= 20;
+            })),
+            speech: "How many objects can you count?"
+          };
+        }
+        var nextNumber = number >= 10 ? 1 : number + 1;
+        return {
+          kind: "number",
+          prompt: "What number comes after " + number + "?",
+          visual: '<span class="big-letter">' + number + " → ?</span>",
+          answer: nextNumber,
+          options: makeOptions(nextNumber, [number, number + 2, Math.max(1, number - 1)]),
+          speech: "What number comes after " + number + "?"
+        };
+      }
+
+      function makeMultiplicationQuestion(stage, index) {
+        var maxTable = stage < 61 ? 5 : (stage < 81 ? 10 : 12);
+        var left = randomInt(2, maxTable);
+        var right = randomInt(1, 10);
+        var answer = left * right;
+        var mode = stage < 61 ? 0 : (stage + index) % 3;
+        var prompt;
+        var visual;
+        var correctAnswer;
+        if (mode === 1) {
+          prompt = "Which number is missing? " + left + " × ? = " + answer;
+          visual = '<span class="multiply-card">' + left + "</span><span class=\"multiply-sign\">×</span><span class=\"multiply-card\">?</span><span class=\"multiply-sign\">=</span><span class=\"multiply-card\">" + answer + "</span>";
+          correctAnswer = right;
+        } else if (mode === 2) {
+          prompt = "Which number is missing? ? × " + right + " = " + answer;
+          visual = '<span class="multiply-card">?</span><span class="multiply-sign">×</span><span class="multiply-card">' + right + "</span><span class=\"multiply-sign\">=</span><span class=\"multiply-card\">" + answer + "</span>";
+          correctAnswer = left;
+        } else {
+          prompt = "Solve this table challenge: " + left + " × " + right + " = ?";
+          visual = '<span class="multiply-card">' + left + "</span><span class=\"multiply-sign\">×</span><span class=\"multiply-card\">" + right + "</span><span class=\"multiply-sign\">=</span><span class=\"multiply-card\">?</span>";
+          correctAnswer = answer;
+        }
+        return {
+          kind: "multiplication",
+          prompt: prompt,
+          visual: visual,
+          answer: correctAnswer,
+          options: makeOptions(correctAnswer, [answer - left, answer + left, answer - right, answer + right, left + right, left * (right + 1)].filter(function (value) {
+            return value > 0;
+          })),
+          speech: prompt
+        };
+      }
+
+      function buildQuestionTypes(stage) {
+        if (stage <= 10) return ["alphabet", "alphabet", "alphabet", "alphabet", "alphabet"];
+        if (stage <= 20) return ["number", "number", "number", "number", "number"];
+        if (stage <= 30) return shuffle(["alphabet", "alphabet", "number", "number", "number"]);
+        return shuffle(["alphabet", "number", "multiplication", "multiplication", "alphabet"]);
+      }
+
+      function generateQuestions(stage) {
+        return buildQuestionTypes(stage).map(function (kind, index) {
+          if (kind === "alphabet") return makeAlphabetQuestion(stage, index);
+          if (kind === "number") return makeNumberQuestion(stage, index);
+          return makeMultiplicationQuestion(stage, index);
+        });
+      }
+
+      function startStage(stage) {
+        if (!activeUser) {
+          openAuth("login");
+          return;
+        }
+        var available = progress.paid ? stage <= TOTAL_STAGES : stage <= Math.min(3, progress.unlocked);
+        if (!available) {
+          openPaymentModal();
+          return;
+        }
+        currentStage = stage;
+        currentQuestionIndex = 0;
+        currentScore = 0;
+        currentCorrect = 0;
+        currentQuestions = generateQuestions(stage);
+        showScreen("gameScreen");
+        elements.gameStageLabel.textContent = "Stage " + stage;
+        elements.gameStageTopic.textContent = getTopic(stage);
+        renderQuestion();
+      }
+
+      function renderQuestion() {
+        var question = currentQuestions[currentQuestionIndex];
+        hasAnswered = false;
+        elements.questionKicker.textContent = "Question " + (currentQuestionIndex + 1) + " of " + QUESTIONS_PER_STAGE;
+        elements.questionPrompt.textContent = question.prompt;
+        elements.questionVisual.innerHTML = question.visual;
+        elements.questionProgress.style.width = (((currentQuestionIndex + 1) / QUESTIONS_PER_STAGE) * 100) + "%";
+        elements.scoreLabel.textContent = currentScore + " points";
+        elements.feedback.className = "feedback";
+        elements.feedbackText.textContent = "";
+        elements.nextButton.textContent = currentQuestionIndex === QUESTIONS_PER_STAGE - 1 ? "Finish stage →" : "Next →";
+        elements.answerGrid.innerHTML = "";
+        question.options.forEach(function (option) {
+          var button = document.createElement("button");
+          button.type = "button";
+          button.className = "answer-option" + (option.picture ? " picture-option" : "");
+          button.textContent = option.label;
+          button.setAttribute("aria-label", "Answer " + option.value);
+          button.addEventListener("click", function () {
+            chooseAnswer(option.value, button);
+          });
+          elements.answerGrid.appendChild(button);
+        });
+      }
+
+      function chooseAnswer(value, clickedButton) {
+        if (hasAnswered) return;
+        hasAnswered = true;
+        var question = currentQuestions[currentQuestionIndex];
+        var correct = String(value) === String(question.answer);
+        elements.answerGrid.querySelectorAll(".answer-option").forEach(function (button) {
+          button.disabled = true;
+          if (button.getAttribute("aria-label") === "Answer " + question.answer) button.classList.add("correct");
+        });
+        if (correct) {
+          currentCorrect += 1;
+          currentScore += 100;
+          clickedButton.classList.add("correct");
+          elements.feedback.classList.add("show", "good");
+          elements.feedbackText.textContent = "Brilliant! Your brain is shining. 🌟";
+          playTone(true);
+          createConfetti();
+        } else {
+          clickedButton.classList.add("wrong");
+          elements.feedback.classList.add("show");
+          elements.feedbackText.textContent = "Nice try! The answer is " + question.answer + ". Keep going! 💛";
+          playTone(false);
+        }
+        elements.scoreLabel.textContent = currentScore + " points";
+      }
+
+      function finishStage() {
+        var stars = currentCorrect >= 5 ? 3 : (currentCorrect >= 3 ? 2 : 1);
+        var oldStars = Number(progress.stars[currentStage]) || 0;
+        progress.stars[currentStage] = Math.max(oldStars, stars);
+        if (currentStage === 3 && !progress.paid) {
+          progress.unlocked = 3;
+          persistLocalUser();
+          sendProgressToSheet();
+          openPaymentModal();
+          return;
+        }
+        if (currentStage < TOTAL_STAGES) {
+          progress.unlocked = progress.paid ? TOTAL_STAGES : Math.max(progress.unlocked, currentStage + 1);
+        }
+        persistLocalUser();
+        sendProgressToSheet();
+        updateAccountUI();
+        elements.completeEmoji.textContent = stars === 3 ? "🏆" : (stars === 2 ? "🌟" : "💪");
+        elements.completeTitle.textContent = stars === 3 ? "Superstar work!" : "Stage complete!";
+        elements.completeMessage.textContent =
+          "Well done, " + titleCaseName() + "! You got " + currentCorrect + " out of " + QUESTIONS_PER_STAGE + " right and earned " + currentScore + " points.";
+        elements.completeStars.textContent = starsText(stars);
+        elements.nextStageButton.textContent = currentStage >= TOTAL_STAGES ? "Play again" : "Next stage";
+        openModal(elements.completeModal);
+        playTone(true);
+      }
+
+      function nextQuestion() {
+        if (!hasAnswered) return;
+        if (currentQuestionIndex >= QUESTIONS_PER_STAGE - 1) {
+          finishStage();
+          return;
+        }
+        currentQuestionIndex += 1;
+        renderQuestion();
+      }
+
+      function openPaymentModal() {
+        if (progress.paid) {
+          renderStageMap();
+          showScreen("stageScreen");
+          return;
+        }
+        elements.paymentMessage.textContent = "Stage 3 is complete. Pay once to unlock all 100 stages for " + titleCaseName() + ".";
+        elements.upiIdText.textContent = "UPI ID: " + CONFIG.upiId;
+        elements.utrField.value = progress.paymentUtr || "";
+        elements.paymentConfirmation.checked = false;
+        showPaymentStatus(progress.paymentStatus === "PENDING"
+          ? "Payment details submitted. We are waiting for verification."
+          : "", progress.paymentStatus === "PENDING" ? "" : "");
+        openModal(elements.paymentModal);
+      }
+
+      function showPaymentStatus(message, statusClass) {
+        elements.paymentStatus.textContent = message;
+        elements.paymentStatus.className = "payment-status" + (message ? " show" : "") + (statusClass ? " " + statusClass : "");
+      }
+
+      function submitPayment() {
+        if (!activeUser) return;
+        var utr = elements.utrField.value.trim();
+        if (!utr || !elements.paymentConfirmation.checked) {
+          window.alert("Please enter the UTR/transaction ID and confirm the ₹99 payment.");
+          return;
+        }
+        progress.paymentId = progress.paymentId || makeId("payment");
+        progress.paymentUtr = utr;
+        progress.paymentStatus = "PENDING";
+        persistLocalUser();
+        sendToSheet({
+          action: "payment_submitted",
+          userId: activeUser.userId,
+          name: activeUser.name,
+          gender: activeUser.gender,
+          age: activeUser.age,
+          mobile: activeUser.mobile,
+          email: activeUser.email || "",
+          paymentId: progress.paymentId,
+          utr: utr,
+          amount: CONFIG.subscriptionAmount,
+          paymentStatus: "PENDING",
+          progressData: JSON.stringify(progress)
+        });
+        showPaymentStatus("Payment details submitted. Access will unlock after the UTR is verified.", "");
+        elements.checkPaymentButton.focus();
+      }
+
+      function checkPaymentStatus() {
+        if (!activeUser) return;
+        if (!isConfigured()) {
+          showPaymentStatus("Add the deployed Apps Script URL in CONFIG.appsScriptUrl before checking payment status.", "error");
+          return;
+        }
+        showPaymentStatus("Checking payment status…", "");
+        requestJsonp({ action: "payment_status", userId: activeUser.userId }, function (response) {
+          if (response && response.paid) {
+            progress.paid = true;
+            progress.unlocked = TOTAL_STAGES;
+            progress.paymentStatus = "PAID";
+            persistLocalUser();
+            sendProgressToSheet();
+            updateAccountUI();
+            showPaymentStatus("Payment verified. All 100 stages are now unlocked!", "success");
+            window.setTimeout(function () {
+              closeModal(elements.paymentModal);
+              renderStageMap();
+              showScreen("stageScreen");
+            }, 1100);
+            return;
+          }
+          showPaymentStatus(response && response.message ? response.message : "Payment is still pending verification. Please try again later.", "");
+        });
+      }
+
+      function configureQr() {
+        elements.upiIdText.textContent = "UPI ID: " + CONFIG.upiId;
+        if (!CONFIG.upiQrImage || CONFIG.upiQrImage.indexOf("upi-qr.png") >= 0 && CONFIG.upiQrImage === "assets/upi-qr.png") {
+          elements.upiQrImage.hidden = true;
+          elements.qrPlaceholder.hidden = false;
+          return;
+        }
+        elements.upiQrImage.onload = function () {
+          elements.upiQrImage.hidden = false;
+          elements.qrPlaceholder.hidden = true;
+        };
+        elements.upiQrImage.onerror = function () {
+          elements.upiQrImage.hidden = true;
+          elements.qrPlaceholder.hidden = false;
+        };
+        elements.upiQrImage.src = CONFIG.upiQrImage;
+      }
+
+      function copyUpi() {
+        if (!CONFIG.upiId || CONFIG.upiId.indexOf("YOUR-") === 0 || CONFIG.upiId === "Scan the QR code") {
+          showPaymentStatus("Please scan the QR code. A separate UPI ID has not been configured.", "error");
+          return;
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(CONFIG.upiId).then(function () {
+            elements.copyUpiButton.textContent = "Copied";
+            window.setTimeout(function () {
+              elements.copyUpiButton.textContent = "Copy";
+            }, 1400);
+          });
+        } else {
+          window.prompt("Copy this UPI ID:", CONFIG.upiId);
+        }
+      }
+
+      function speakCurrentQuestion() {
+        if (!("speechSynthesis" in window) || !currentQuestions[currentQuestionIndex]) return;
+        window.speechSynthesis.cancel();
+        var utterance = new SpeechSynthesisUtterance(currentQuestions[currentQuestionIndex].speech);
+        utterance.rate = 0.84;
+        utterance.pitch = 1.2;
+        window.speechSynthesis.speak(utterance);
+      }
+
+      function playTone(success) {
+        if (!soundOn || (!window.AudioContext && !window.webkitAudioContext)) return;
+        try {
+          var AudioCtor = window.AudioContext || window.webkitAudioContext;
+          var context = new AudioCtor();
+          var oscillator = context.createOscillator();
+          var gain = context.createGain();
+          oscillator.type = "sine";
+          oscillator.frequency.value = success ? 660 : 220;
+          gain.gain.setValueAtTime(0.0001, context.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.08, context.currentTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + (success ? 0.22 : 0.16));
+          oscillator.connect(gain);
+          gain.connect(context.destination);
+          oscillator.start();
+          oscillator.stop(context.currentTime + (success ? 0.25 : 0.19));
+        } catch (error) {
+          // Sound is optional.
+        }
+      }
+
+      function createConfetti() {
+        for (var i = 0; i < 14; i += 1) {
+          var piece = document.createElement("span");
+          piece.className = "confetti";
+          piece.style.left = randomInt(8, 92) + "%";
+          piece.style.background = celebrationColors[i % celebrationColors.length];
+          piece.style.setProperty("--x", randomInt(-150, 150) + "px");
+          piece.style.animationDelay = (i * 0.018) + "s";
+          elements.celebration.appendChild(piece);
+          window.setTimeout(function () {
+            if (elements.celebration.firstChild) elements.celebration.removeChild(elements.celebration.firstChild);
+          }, 1450);
+        }
+      }
+
+      function loginOrRestoreOnLoad() {
+        if (!appState.activeUserId || !appState.accounts[appState.activeUserId]) {
+          updateAccountUI();
+          return;
+        }
+        setActiveUser(appState.accounts[appState.activeUserId], true);
+      }
+
+      elements.playButton.addEventListener("click", function () {
+        if (activeUser) {
+          renderStageMap();
+          showScreen("stageScreen");
+        } else {
+          openAuth("signup");
+        }
+      });
+
+      elements.continueButton.addEventListener("click", function () {
+        if (activeUser) {
+          renderStageMap();
+          showScreen("stageScreen");
+        } else {
+          openAuth("login");
+        }
+      });
+
+      elements.nameField.addEventListener("input", function () {
+        if (!activeUser) return;
+        activeUser.name = elements.nameField.value.trim() || activeUser.name;
+        persistLocalUser();
+      });
+
+      elements.brandButton.addEventListener("click", function () {
+        closeModal(elements.completeModal);
+        closeModal(elements.parentModal);
+        closeModal(elements.authModal);
+        closeModal(elements.resumeModal);
+        closeModal(elements.paymentModal);
+        showScreen("homeScreen");
+      });
+
+      elements.homeFromStages.addEventListener("click", function () {
+        showScreen("homeScreen");
+      });
+
+      elements.backToStages.addEventListener("click", function () {
+        renderStageMap();
+        showScreen("stageScreen");
+      });
+
+      elements.parentButton.addEventListener("click", function () {
+        openModal(elements.parentModal);
+      });
+
+      elements.closeParentButton.addEventListener("click", function () {
+        closeModal(elements.parentModal);
+      });
+
+      elements.parentModal.addEventListener("click", function (event) {
+        if (event.target === elements.parentModal) closeModal(elements.parentModal);
+      });
+
+      elements.accountButton.addEventListener("click", function (event) {
+        event.stopPropagation();
+        var hidden = elements.accountDropdown.hidden;
+        elements.accountDropdown.hidden = !hidden;
+        elements.accountButton.setAttribute("aria-expanded", String(hidden));
+      });
+
+      document.addEventListener("click", function (event) {
+        if (!elements.accountDropdown.contains(event.target) && event.target !== elements.accountButton) {
+          elements.accountDropdown.hidden = true;
+          elements.accountButton.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      elements.logoutButton.addEventListener("click", function () {
+        appState.activeUserId = null;
+        saveAppState();
+        activeUser = null;
+        progress = emptyProgress();
+        updateAccountUI();
+        elements.accountDropdown.hidden = true;
+        showScreen("homeScreen");
+      });
+
+      elements.resetButton.addEventListener("click", function () {
+        if (!activeUser) {
+          closeModal(elements.parentModal);
+          openAuth("login");
+          return;
+        }
+        if (!window.confirm("Reset this child’s learning progress?")) return;
+        resetCurrentProgress();
+        closeModal(elements.parentModal);
+        renderStageMap();
+        showScreen("stageScreen");
+      });
+
+      elements.soundButton.addEventListener("click", function () {
+        soundOn = !soundOn;
+        elements.soundButton.textContent = soundOn ? "🔊" : "🔇";
+        elements.soundButton.setAttribute("aria-label", soundOn ? "Turn sound off" : "Turn sound on");
+      });
+
+      elements.signupForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        signUp();
+      });
+
+      elements.loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        loginWithDetails(elements.loginName.value.trim(), elements.loginMobile.value);
+      });
+
+      elements.showLoginButton.addEventListener("click", function () {
+        openAuth("login");
+      });
+
+      elements.showSignupButton.addEventListener("click", function () {
+        openAuth("signup");
+      });
+
+      elements.closeAuthButton.addEventListener("click", function () {
+        closeModal(elements.authModal);
+      });
+
+      elements.authModal.addEventListener("click", function (event) {
+        if (event.target === elements.authModal) closeModal(elements.authModal);
+      });
+
+      elements.resumeButton.addEventListener("click", function () {
+        closeModal(elements.resumeModal);
+        renderStageMap();
+        showScreen("stageScreen");
+      });
+
+      elements.startFreshButton.addEventListener("click", function () {
+        resetCurrentProgress();
+        closeModal(elements.resumeModal);
+        renderStageMap();
+        showScreen("stageScreen");
+      });
+
+      elements.closeResumeButton.addEventListener("click", function () {
+        closeModal(elements.resumeModal);
+      });
+
+      elements.resumeModal.addEventListener("click", function (event) {
+        if (event.target === elements.resumeModal) closeModal(elements.resumeModal);
+      });
+
+      elements.paymentForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        submitPayment();
+      });
+
+      elements.checkPaymentButton.addEventListener("click", checkPaymentStatus);
+      elements.copyUpiButton.addEventListener("click", copyUpi);
+      elements.closePaymentButton.addEventListener("click", function () {
+        closeModal(elements.paymentModal);
+        renderStageMap();
+        showScreen("stageScreen");
+      });
+
+      elements.paymentModal.addEventListener("click", function (event) {
+        if (event.target === elements.paymentModal) closeModal(elements.paymentModal);
+      });
+
+      elements.speakButton.addEventListener("click", speakCurrentQuestion);
+      elements.nextButton.addEventListener("click", nextQuestion);
+
+      elements.completeModal.addEventListener("click", function (event) {
+        if (event.target === elements.completeModal) closeModal(elements.completeModal);
+      });
+
+      elements.nextStageButton.addEventListener("click", function () {
+        closeModal(elements.completeModal);
+        if (currentStage >= TOTAL_STAGES) {
+          startStage(1);
+          return;
+        }
+        startStage(currentStage + 1);
+      });
+
+      elements.mapButton.addEventListener("click", function () {
+        closeModal(elements.completeModal);
+        renderStageMap();
+        showScreen("stageScreen");
+      });
+
+      window.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          closeModal(elements.completeModal);
+          closeModal(elements.parentModal);
+          closeModal(elements.authModal);
+          closeModal(elements.resumeModal);
+          closeModal(elements.paymentModal);
+        }
+      });
+
+      configureQr();
+      loginOrRestoreOnLoad();
+      renderStageMap();
+    }());
+  </script>
+</body>
+</html>
