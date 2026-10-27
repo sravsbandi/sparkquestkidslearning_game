@@ -2550,8 +2550,8 @@
             <p class="field-error" id="signupGenderError" role="alert" hidden></p>
           </div>
           <div class="form-field">
-            <label for="signupAge">Age <span>*</span></label>
-            <input class="form-input" id="signupAge" name="age" type="number" min="1" max="5" step="1" required inputmode="numeric" />
+            <label for="signupAge">Age</label>
+            <input class="form-input" id="signupAge" name="age" type="number" inputmode="numeric" />
             <p class="field-error" id="signupAgeError" role="alert" hidden></p>
           </div>
           <div class="form-field full">
@@ -3835,12 +3835,8 @@
 
         if (!loginMode) {
           var gender = elements.signupGender.value;
-          var age = Number(elements.signupAge.value);
           var email = elements.signupEmail.value.trim();
           if (!gender) invalid(elements.signupGender, elements.signupGenderError, "Please select a gender.");
-          if (!Number.isInteger(age) || age < 1 || age > 5) {
-            invalid(elements.signupAge, elements.signupAgeError, "Age must be between 1 and 5.");
-          }
           if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             invalid(elements.signupEmail, elements.signupEmailError, "Please enter a valid email address.");
           }
@@ -4089,7 +4085,8 @@
         if (!validateAuthFields("signup")) return;
         var name = elements.signupName.value.trim();
         var gender = elements.signupGender.value;
-        var age = Number(elements.signupAge.value);
+        var ageValue = elements.signupAge.value.trim();
+        var age = ageValue === "" ? "" : Number(ageValue);
         var mobile = normalizeMobile(elements.signupMobile.value);
         var email = elements.signupEmail.value.trim();
         var existing = findLocalUser(name, mobile);
